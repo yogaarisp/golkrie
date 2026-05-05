@@ -241,34 +241,34 @@ const formatTime = (dateString) => {
             <div v-else class="px-6 max-w-7xl mx-auto">
               <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 <div v-for="pos in [
-                  {key: 'GK', label: 'Goalkeeper', quota: activeSquadMatch.quota_gk, icon: 'sports_handball', color: 'text-secondary'},
-                  {key: 'DF', label: 'Defender', quota: activeSquadMatch.quota_df, icon: 'shield', color: 'text-blue-400'},
-                  {key: 'MF', label: 'Midfielder', quota: activeSquadMatch.quota_mf, icon: 'settings_input_component', color: 'text-green-400'},
-                  {key: 'FW', label: 'Forward', quota: activeSquadMatch.quota_fw, icon: 'bolt', color: 'text-primary'}
-                ]" :key="pos.key" class="bento-card p-6 flex flex-col h-[400px] bg-background/50">
+                  {key: 'GK', label: 'Goalkeeper', quota: activeSquadMatch.quota_gk, icon: 'sports_handball'},
+                  {key: 'DF', label: 'Defender', quota: activeSquadMatch.quota_df, icon: 'shield'},
+                  {key: 'MF', label: 'Midfielder', quota: activeSquadMatch.quota_mf, icon: 'settings_input_component'},
+                  {key: 'FW', label: 'Forward', quota: activeSquadMatch.quota_fw, icon: 'bolt'}
+                ]" :key="pos.key" class="bento-card p-6 flex flex-col h-[400px] bg-surface-container/20 backdrop-blur-sm border border-white/5">
                   <div class="flex justify-between items-start mb-6">
-                    <div class="flex items-center gap-2" :class="pos.color">
-                      <span class="material-symbols-outlined text-sm">{{ pos.icon }}</span>
+                    <div class="flex items-center gap-2 text-primary">
+                      <span class="material-symbols-outlined text-lg">{{ pos.icon }}</span>
                       <span class="font-black uppercase tracking-widest text-[10px]">{{ pos.label }}</span>
                     </div>
-                    <span class="text-[10px] font-black px-2 py-0.5 rounded-full bg-white/5 border border-white/10" :class="squadList.filter(p => p.position === pos.key).length >= pos.quota ? 'text-primary' : 'text-on-surface-variant'">
+                    <span class="text-[10px] font-black px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
                       {{ squadList.filter(p => p.position === pos.key).length }}/{{ pos.quota }}
                     </span>
                   </div>
 
                   <div class="space-y-2 overflow-y-auto custom-scrollbar flex-1 pr-1">
                     <div v-for="player in squadList.filter(p => p.position === pos.key)" :key="player.id" 
-                      class="flex items-center justify-between bg-white/5 p-3 rounded-xl border border-white/5 hover:border-white/10 transition-all"
+                      class="flex justify-between items-center bg-white/5 border border-white/5 px-4 py-3 rounded-xl mb-2 hover:border-primary/30 transition-all group"
                     >
-                      <span class="text-xs font-bold text-white truncate max-w-[120px]">{{ player.player_name }}</span>
-                      <span class="text-[8px] font-black px-2 py-0.5 rounded bg-green-500/10 text-green-500 border border-green-500/20" v-if="player.is_accepted">PAID</span>
-                      <span class="text-[8px] font-black px-2 py-0.5 rounded bg-yellow-500/10 text-yellow-500 border border-yellow-500/20" v-else>WAITING</span>
+                      <span class="text-sm font-bold text-white group-hover:text-primary transition-colors">{{ player.player_name }}</span>
+                      <span class="text-[8px] font-black uppercase tracking-tighter text-primary/60 border border-primary/20 px-1.5 py-0.5 rounded">PAID</span>
                     </div>
 
-                    <div v-for="i in Math.max(0, pos.quota - squadList.filter(p => p.position === pos.key).length)" :key="'empty-'+i"
-                      class="flex items-center gap-2 p-3 rounded-xl border border-dashed border-white/10 opacity-30"
+                    <!-- Open Slots -->
+                    <div v-for="i in Math.max(0, pos.quota - squadList.filter(p => p.position === pos.key).length)" :key="'open-'+i"
+                      class="flex items-center gap-3 bg-white/[0.02] border border-dashed border-white/10 px-4 py-3 rounded-xl mb-2 opacity-40"
                     >
-                      <div class="w-4 h-4 rounded-full border border-white/20"></div>
+                      <div class="w-2 h-2 rounded-full border border-white/30"></div>
                       <span class="text-[9px] font-black uppercase tracking-widest text-on-surface-variant">Open Slot</span>
                     </div>
                   </div>

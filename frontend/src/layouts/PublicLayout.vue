@@ -16,8 +16,11 @@ const isMenuOpen = ref(false);
     <!-- TopNavBar -->
     <header class="fixed top-0 w-full z-50 bg-surface-container/80 backdrop-blur-md border-b border-outline-variant/30">
       <nav class="flex justify-between items-center h-20 px-6 max-w-7xl mx-auto">
-        <router-link to="/" class="text-2xl font-black text-primary tracking-tighter uppercase font-lexend">
+        <router-link to="/" class="flex items-center gap-3">
+          <img v-if="settings.app_logo" :src="settings.app_logo" class="h-10 w-auto object-contain" :alt="settings.app_name" />
+          <span v-else class="text-2xl font-black text-primary tracking-tighter uppercase font-lexend">
             {{ settings.app_name || 'Golkrie' }}
+          </span>
         </router-link>
         
           <a href="#home" class="text-on-surface/70 hover:text-white transition-colors font-bold uppercase tracking-wider text-sm">Home</a>
