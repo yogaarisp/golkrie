@@ -7,14 +7,14 @@
       "config": { "distDir": "dist" }
     },
     {
-      "src": "backend/public/index.php",
+      "src": "backend/index.php",
       "use": "vercel-php@0.7.1"
     }
   ],
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "backend/public/index.php"
+      "dest": "backend/index.php"
     },
     {
       "src": "/assets/(.*)",
