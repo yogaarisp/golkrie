@@ -1,0 +1,82 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #ffb4ab;
+  --color-primary-container: #dc2626;
+  --color-on-primary: #690005;
+  --color-on-primary-container: #fff6f5;
+  --color-secondary: #ffe083;
+  --color-secondary-container: #eec200;
+  --color-on-secondary: #3c2f00;
+  --color-background: #121314;
+  --color-surface: #121314;
+  --color-surface-container: #1f2020;
+  --color-surface-container-low: #1b1c1c;
+  --color-surface-container-high: #292a2a;
+  --color-outline: #ac8884;
+  --color-outline-variant: #5c403c;
+  --color-on-surface: #e3e2e2;
+  --color-on-surface-variant: #e6bdb8;
+
+  --font-lexend: "Lexend", sans-serif;
+  --font-inter: "Inter", sans-serif;
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  html {
+    @apply scroll-smooth;
+  }
+  body {
+    @apply bg-background text-on-surface font-lexend antialiased overflow-x-hidden;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-surface-container/60 backdrop-blur-lg border border-outline-variant/40 rounded-2xl;
+  }
+
+  .bento-card {
+    background: linear-gradient(145deg, #1f2020 0%, #121314 100%);
+    @apply relative overflow-hidden border border-outline-variant rounded-2xl;
+  }
+
+  .modal-overlay {
+    @apply fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300;
+  }
+  .modal-overlay.active {
+    @apply opacity-100 pointer-events-auto;
+  }
+  .modal-content {
+    background: linear-gradient(145deg, #1f2020 0%, #121314 100%);
+    @apply border border-outline-variant p-8 max-w-lg w-[90%] rounded-3xl translate-y-8 scale-95 transition-all duration-300 max-h-[90vh] overflow-y-auto;
+  }
+  .modal-overlay.active .modal-content {
+    @apply translate-y-0 scale-100;
+  }
+
+  .spinner {
+    @apply w-4 h-4 border-2 border-primary/20 border-t-primary rounded-full animate-spin inline-block;
+  }
+}
+
+@keyframes progressPulse {
+  0%, 100% { box-shadow: 0 0 8px currentColor; }
+  50% { box-shadow: 0 0 16px currentColor; }
+}
+.progress-glow {
+  animation: progressPulse 2s ease-in-out infinite;
+}
+
+@keyframes slotPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+.slot-pulse {
+  animation: slotPulse 1.5s ease-in-out infinite;
+}
