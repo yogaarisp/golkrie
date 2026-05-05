@@ -35,32 +35,40 @@ const registrationForm = ref({
 const fetchLandingData = async () => {
   try {
     const response = await axios.get('/api/landing');
-    upcomingMatches.value = response.data.upcomingMatches;
-    matchHistory.value = response.data.matchHistory;
-    settings.value = response.data.settings;
-    sponsors.value = response.data.sponsors;
+    console.log('API Response:', response.data);
     
-    // Set first match as active squad by default
-    if (upcomingMatches.value.length > 0) {
-      selectMatchForSquad(upcomingMatches.value[0]);
+    if (response && response.data) {
+      if (response.data.settings) {
+        settings.value = { ...settings.value, ...response.data.settings };
+      }
+      upcomingMatches.value = response.data.upcomingMatches || response.data.matches || [];
+      sponsors.value = response.data.sponsors || [];
+      
+      // Set first match as active squad by default
+      if (upcomingMatches.value && upcomingMatches.value.length > 0) {
+        selectMatchForSquad(upcomingMatches.value[0]);
+      }
     }
   } catch (e) {
-    console.error('Failed to fetch landing data', e);
+    console.error('Failed to fetch landing data:', e.response || e);
+    // Ensure we still turn off loading even on total failure
   } finally {
-    loading.value = false;
+    setTimeout(() => {
+      loading.value = false;
+    }, 500); // Small delay to ensure render
   }
 };
 
 const selectMatchForSquad = async (match) => {
+  if (!match) return;
   activeSquadMatch.value = match;
   squadLoading.value = true;
   try {
-    // We reuse the landing data structure or fetch specifically
-    // For now, let's assume we can fetch squad for a specific match
     const response = await axios.get(`/api/landing?match_id=${match.id}`);
-    squadList.value = response.data.initialSquad;
+    squadList.value = response.data?.initialSquad || [];
   } catch (e) {
     console.error('Failed to fetch squad', e);
+    squadList.value = [];
   } finally {
     squadLoading.value = false;
   }
@@ -118,12 +126,22 @@ const submitRegistration = async () => {
 };
 
 const formatDate = (dateString) => {
+  if (!dateString) return 'TBA';
   const options = { weekday: 'long', day: 'numeric', month: 'short' };
-  return new Date(dateString).toLocaleDateString('id-ID', options);
+  try {
+    return new Date(dateString).toLocaleDateString('id-ID', options);
+  } catch (e) {
+    return 'TBA';
+  }
 };
 
 const formatTime = (dateString) => {
-  return new Date(dateString).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB';
+  if (!dateString) return '--:--';
+  try {
+    return new Date(dateString).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB';
+  } catch (e) {
+    return '--:--';
+  }
 };
 </script>
 

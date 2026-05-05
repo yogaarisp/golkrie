@@ -17,8 +17,8 @@
       "dest": "backend/public/index.php"
     },
     {
-      "src": "/storage/(.*)",
-      "dest": "backend/public/storage/$1"
+      "src": "/assets/(.*)",
+      "dest": "frontend/assets/$1"
     },
     {
       "src": "/(.*)",

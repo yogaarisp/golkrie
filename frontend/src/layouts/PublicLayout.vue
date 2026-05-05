@@ -1,19 +1,25 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 
-defineProps({
+const props = defineProps({
   settings: {
     type: Object,
     default: () => ({})
   }
 });
 
-const settings = ref({
-  app_name: 'Golkrie',
-  app_tagline: 'Golek Kringet, Jalin Seduluran.',
-  instagram_url: 'https://instagram.com/golkrie',
-  whatsapp_contact: '08123456789'
-});
+// Sync favicon
+watch(() => props.settings?.app_favicon, (newFavicon) => {
+  if (newFavicon) {
+    let link = document.querySelector("link[rel~='icon']");
+    if (!link) {
+      link = document.createElement('link');
+      link.rel = 'icon';
+      document.head.appendChild(link);
+    }
+    link.href = newFavicon;
+  }
+}, { immediate: true });
 
 const isMenuOpen = ref(false);
 </script>
@@ -24,9 +30,9 @@ const isMenuOpen = ref(false);
     <header class="fixed top-0 w-full z-50 bg-surface-container/80 backdrop-blur-md border-b border-outline-variant/30">
       <nav class="flex justify-between items-center h-20 px-6 max-w-7xl mx-auto">
         <router-link to="/" class="flex items-center gap-3">
-          <img v-if="settings.app_logo" :src="settings.app_logo" class="h-10 w-auto object-contain" :alt="settings.app_name" />
+          <img v-if="props.settings?.app_logo" :src="props.settings.app_logo" class="h-10 w-auto object-contain" :alt="props.settings.app_name" />
           <span v-else class="text-2xl font-black text-primary tracking-tighter uppercase font-lexend">
-            {{ settings.app_name || 'Golkrie' }}
+            {{ props.settings?.app_name || 'Golkrie' }}
           </span>
         </router-link>
         
@@ -88,9 +94,9 @@ const isMenuOpen = ref(false);
     <!-- Footer -->
     <footer class="bg-surface-container-low w-full py-12 border-t border-outline-variant/30">
       <div class="flex flex-col md:flex-row justify-between items-center px-6 max-w-7xl mx-auto gap-8">
-        <div class="text-xl font-bold text-on-surface">{{ settings.app_name || 'Golkrie' }}</div>
+        <div class="text-xl font-bold text-on-surface">{{ props.settings?.app_name || 'Golkrie' }}</div>
         <div class="text-sm text-on-surface-variant text-center md:text-left">
-          {{ settings.footer_text || '© 2024 Golkrie Community. Golek Kringet, Jalin Seduluran.' }}
+          {{ props.settings?.footer_text || '© 2024 Golkrie Community. Golek Kringet, Jalin Seduluran.' }}
         </div>
         <div class="flex gap-6">
           <a href="#" class="text-on-surface-variant hover:text-primary transition-colors text-sm">Privacy</a>
