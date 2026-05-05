@@ -1,10 +1,11 @@
 <?php
+use Illuminate\Foundation\Application;
+use Illuminate\Http\Request;
+
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
 try {
-    use Illuminate\Foundation\Application;
-    use Illuminate\Http\Request;
 
     define('LARAVEL_START', microtime(true));
 
