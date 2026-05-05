@@ -165,10 +165,14 @@ const formatTime = (dateString) => {
         <section id="schedule" class="py-24 bg-background relative z-10">
           <div class="px-6 max-w-7xl mx-auto mb-16 text-center">
             <h2 class="text-4xl md:text-5xl font-black text-white mb-4 tracking-tighter uppercase">Upcoming <span class="text-primary">Matches</span></h2>
-            <div v-if="!upcomingMatches || upcomingMatches.length === 0" class="w-full text-center py-20">
-              <p class="text-on-surface-variant font-bold italic tracking-widest uppercase opacity-50">Belum ada jadwal pertandingan.</p>
-            </div>
-            <div v-else class="px-6 max-w-7xl mx-auto flex flex-wrap justify-center gap-6 md:gap-8">
+            <div class="w-16 h-1.5 bg-primary mx-auto rounded-full mb-6"></div>
+            <p class="text-on-surface-variant text-base">Pilih jadwal pertandingan dan amankan slot kamu sekarang.</p>
+          </div>
+
+          <div v-if="!upcomingMatches || upcomingMatches.length === 0" class="w-full text-center py-20 px-6">
+            <p class="text-on-surface-variant font-bold italic tracking-widest uppercase opacity-50">Belum ada jadwal pertandingan.</p>
+          </div>
+          <div v-else class="px-6 max-w-7xl mx-auto flex flex-wrap justify-center gap-6 md:gap-8">
             <div v-for="(match, index) in upcomingMatches" :key="match.id" 
               @click="selectMatchForSquad(match)"
               class="bento-card p-6 group transition-all duration-500 hover:border-primary/50 shadow-2xl w-full md:w-[340px] bg-surface-container/20 backdrop-blur-sm cursor-pointer relative overflow-hidden"
