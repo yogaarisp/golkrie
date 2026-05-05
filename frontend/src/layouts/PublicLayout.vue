@@ -8,6 +8,13 @@ defineProps({
   }
 });
 
+const settings = ref({
+  app_name: 'Golkrie',
+  app_tagline: 'Golek Kringet, Jalin Seduluran.',
+  instagram_url: 'https://instagram.com/golkrie',
+  whatsapp_contact: '08123456789'
+});
+
 const isMenuOpen = ref(false);
 </script>
 
