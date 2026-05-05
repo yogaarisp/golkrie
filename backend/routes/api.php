@@ -8,6 +8,22 @@ use App\Http\Controllers\UploadController;
 Route::get('/landing', [GolkrieController::class, 'index']);
 Route::post('/check-member', [GolkrieController::class, 'checkMember']);
 Route::post('/register', [GolkrieController::class, 'register']);
+Route::get('/debug', function() {
+    try {
+        \DB::connection()->getPdo();
+        return [
+            'database' => 'CONNECTED!',
+            'match_count' => \App\Models\GolkrieMatch::count(),
+            'total_members' => \App\Models\Member::count(),
+            'current_time' => now()->toDateTimeString()
+        ];
+    } catch (\Exception $e) {
+        return [
+            'database' => 'FAILED!',
+            'error' => $e->getMessage()
+        ];
+    }
+});
 
 Route::prefix('admin')->group(function () {
     Route::post('/upload', [UploadController::class, 'upload']);
