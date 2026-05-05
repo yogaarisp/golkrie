@@ -16,8 +16,14 @@ try {
     // Register the Composer autoloader...
     if (file_exists(__DIR__.'/../vendor/autoload.php')) {
         require __DIR__.'/../vendor/autoload.php';
+        if (file_exists(__DIR__.'/../vendor/symfony/polyfill-php84/bootstrap.php')) {
+            require_once __DIR__.'/../vendor/symfony/polyfill-php84/bootstrap.php';
+        }
     } else {
         require __DIR__.'/../../vendor/autoload.php';
+        if (file_exists(__DIR__.'/../../vendor/symfony/polyfill-php84/bootstrap.php')) {
+            require_once __DIR__.'/../../vendor/symfony/polyfill-php84/bootstrap.php';
+        }
     }
 
     $app = require_once __DIR__.'/../bootstrap/app.php';
