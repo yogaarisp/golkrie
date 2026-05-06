@@ -21,7 +21,7 @@ const handleLogout = async () => {
 <template>
   <div class="min-h-screen bg-background text-on-surface flex flex-col md:flex-row">
     <!-- Top Mobile Header -->
-    <header class="md:hidden flex items-center justify-between px-6 h-16 bg-surface-container border-b border-outline-variant/30 sticky top-0 z-40">
+    <header class="md:hidden flex items-center justify-between px-6 h-16 bg-surface-container/80 backdrop-blur-md border-b border-outline-variant/20 sticky top-0 z-40">
       <router-link to="/" class="text-xl font-black text-primary uppercase font-lexend tracking-tighter">Golkrie Admin</router-link>
       <button @click="handleLogout" class="p-2 text-on-surface-variant">
         <span class="material-symbols-outlined text-red-400">logout</span>
@@ -97,7 +97,7 @@ const handleLogout = async () => {
     </aside>
 
     <!-- Bottom Mobile Nav -->
-    <nav class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-surface-container border-t border-outline-variant/20 flex justify-around items-center h-16 px-2">
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-surface-container/80 backdrop-blur-md border-t border-outline-variant/20 flex justify-around items-center h-16 px-2">
       <router-link to="/admin" class="flex flex-col items-center gap-1 text-on-surface-variant" active-class="!text-primary">
         <span class="material-symbols-outlined text-xl">dashboard</span>
         <span class="text-[8px] font-bold uppercase tracking-widest">Dash</span>
