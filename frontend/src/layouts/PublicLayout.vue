@@ -104,7 +104,6 @@ const isMenuOpen = ref(false);
         </div>
         <div class="text-sm text-on-surface-variant text-center md:text-left">
           {{ props.settings?.footer_text || '© 2024 Golkrie Community. Golek Kringet, Jalin Seduluran.' }}
-          <router-link to="/admin" class="ml-4 opacity-30 hover:opacity-100 transition-opacity"><span class="material-symbols-outlined text-xs align-middle">lock</span></router-link>
         </div>
         <div class="flex gap-6">
           <a href="#" class="text-on-surface-variant hover:text-primary transition-colors text-sm">Privacy</a>
