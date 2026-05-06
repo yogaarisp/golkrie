@@ -17,6 +17,7 @@ const teamCount = ref(2);
 
 // Teams structure: { name: string, players: array, background: string }
 const teams = ref([]);
+const playerPool = ref([]);
 
 const fetchTeams = async () => {
   try {
@@ -43,7 +44,6 @@ const setupTeams = (count, config = {}) => {
   const newTeams = [];
   for (let i = 0; i < count; i++) {
     const defaultName = "Team " + chr(65 + i);
-    // If we have config for this index or name, use it
     const teamName = Object.keys(config)[i] || defaultName;
     const teamData = config[teamName] || {};
     
@@ -54,13 +54,9 @@ const setupTeams = (count, config = {}) => {
     });
   }
   
-  // Add unassigned players to a virtual "Unassigned" list if needed
+  // Players not in any of these teams go to the pool
   const assignedNames = newTeams.map(t => t.name);
-  const unassigned = allPlayers.value.filter(p => !p.team_name || !assignedNames.includes(p.team_name));
-  
-  if (unassigned.length > 0 && newTeams.length > 0) {
-     newTeams[0].players = [...newTeams[0].players, ...unassigned];
-  }
+  playerPool.value = allPlayers.value.filter(p => !p.team_name || !assignedNames.includes(p.team_name));
   
   teams.value = newTeams;
 };
@@ -76,6 +72,7 @@ const shufflePlayers = async () => {
       team_count: teamCount.value
     });
     allPlayers.value = response.data.registrations;
+    playerPool.value = []; // After shuffle, usually everyone is assigned
     setupTeams(teamCount.value, match.value.team_config || {});
   } catch (e) {
     alert('Failed to shuffle players.');
@@ -89,6 +86,8 @@ const saveTeams = async () => {
   try {
     // 1. Save Player Assignments
     const assignments = [];
+    
+    // Assigned players
     teams.value.forEach(team => {
       team.players.forEach(player => {
         assignments.push({
@@ -97,10 +96,18 @@ const saveTeams = async () => {
         });
       });
     });
+
+    // Unassigned players (Pool)
+    playerPool.value.forEach(player => {
+      assignments.push({
+        id: player.id,
+        team_name: null
+      });
+    });
     
     await axios.post(`/api/admin/matches/${matchId}/teams`, { assignments });
 
-    // 2. Save Team Config (backgrounds, etc)
+    // 2. Save Team Config
     const config = {};
     teams.value.forEach(team => {
       config[team.name] = {
@@ -128,7 +135,7 @@ const handleFileUpload = async (event, index) => {
 
   const formData = new FormData();
   formData.append('file', file);
-  formData.append('bucket', 'matches'); // Using matches bucket
+  formData.append('bucket', 'matches');
 
   try {
     const response = await axios.post('/api/admin/upload', formData, {
@@ -152,7 +159,7 @@ const addTeam = () => {
 const removeTeam = (index) => {
   if (teams.value.length <= 2) return;
   const playersToMove = teams.value[index].players;
-  teams.value[0].players = [...teams.value[0].players, ...playersToMove];
+  playerPool.value = [...playerPool.value, ...playersToMove];
   teams.value.splice(index, 1);
 };
 
@@ -196,59 +203,93 @@ onMounted(fetchTeams);
         </div>
       </div>
 
-      <!-- Teams Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 items-start">
-        <div v-for="(team, tIdx) in teams" :key="tIdx" 
-          class="glass-card flex flex-col h-full min-h-[450px] relative transition-all"
-          :style="team.background ? { backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.9)), url(${team.background})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}"
-        >
-          <!-- Team Header -->
-          <div class="p-4 border-b border-white/5 flex justify-between items-center" :class="!team.background ? 'bg-white/5' : ''">
-            <input v-model="team.name" class="bg-transparent border-none text-primary font-black uppercase tracking-widest focus:outline-none w-full text-sm placeholder:text-primary/30" placeholder="Enter Team Name" />
-            <div class="flex items-center gap-1">
-              <button @click="triggerFileInput(tIdx)" class="text-on-surface-variant hover:text-white p-1 transition-colors" title="Change Background">
-                <span class="material-symbols-outlined text-sm">image</span>
-              </button>
-              <button v-if="teams.length > 2" @click="removeTeam(tIdx)" class="text-on-surface-variant hover:text-red-400 p-1">
-                <span class="material-symbols-outlined text-xs">close</span>
-              </button>
+      <div class="flex flex-col lg:flex-row gap-8 items-start">
+        <!-- Player Pool (Available Players) -->
+        <div class="w-full lg:w-80 shrink-0 sticky top-24">
+          <div class="glass-card flex flex-col h-full max-h-[calc(100vh-200px)]">
+            <div class="p-4 border-b border-white/5 bg-primary/10 flex justify-between items-center">
+              <span class="text-primary font-black uppercase tracking-widest text-xs">Available Players</span>
+              <span class="bg-primary text-black text-[10px] px-2 py-0.5 rounded-full font-bold">{{ playerPool.length }}</span>
             </div>
-            <input :id="`team-bg-${tIdx}`" type="file" class="hidden" @change="handleFileUpload($event, tIdx)" accept="image/*" />
-          </div>
-
-          <!-- Player List -->
-          <draggable 
-            v-model="team.players" 
-            group="players" 
-            item-key="id"
-            class="flex-1 p-3 space-y-2 min-h-[300px]"
-            ghost-class="opacity-50"
-            drag-class="scale-105"
-          >
-            <template #item="{element}">
-              <div class="p-3 bg-white/5 backdrop-blur-md rounded-xl border border-white/10 cursor-move hover:bg-white/20 transition-all flex items-center justify-between group">
-                <div class="flex flex-col">
-                  <span class="text-xs font-bold text-white">{{ element.player_name }}</span>
-                  <span class="text-[10px] text-on-surface-variant/80 uppercase tracking-tighter">{{ element.position }}</span>
+            
+            <draggable 
+              v-model="playerPool" 
+              group="players" 
+              item-key="id"
+              class="flex-1 p-3 space-y-2 overflow-y-auto"
+              ghost-class="opacity-50"
+            >
+              <template #item="{element}">
+                <div class="p-3 bg-white/5 rounded-xl border border-white/5 cursor-move hover:bg-white/10 transition-all flex items-center justify-between group">
+                  <div class="flex flex-col">
+                    <span class="text-xs font-bold text-white">{{ element.player_name }}</span>
+                    <span class="text-[10px] text-on-surface-variant/60 uppercase tracking-tighter">{{ element.position }}</span>
+                  </div>
+                  <span class="material-symbols-outlined text-xs text-on-surface-variant/30 group-hover:text-primary transition-colors">drag_indicator</span>
                 </div>
-                <span class="material-symbols-outlined text-xs text-on-surface-variant/50 group-hover:text-primary transition-colors">drag_indicator</span>
-              </div>
-            </template>
-          </draggable>
-
-          <!-- Team Footer -->
-          <div class="p-3 bg-black/40 text-center backdrop-blur-sm">
-            <span class="text-[10px] font-bold text-white uppercase tracking-widest">{{ team.players.length }} Players</span>
+              </template>
+            </draggable>
+            
+            <div v-if="playerPool.length === 0" class="p-8 text-center opacity-20 italic text-[10px] uppercase tracking-widest">
+              All players assigned
+            </div>
           </div>
         </div>
 
-        <!-- Add Team Button -->
-        <button v-if="teams.length < 6" @click="addTeam" class="h-[450px] rounded-3xl border-2 border-dashed border-white/5 flex flex-col items-center justify-center gap-4 text-on-surface-variant hover:border-primary/40 hover:text-primary transition-all group">
-          <div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-primary/10 transition-all">
-            <span class="material-symbols-outlined">add</span>
+        <!-- Teams Grid -->
+        <div class="flex-1 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+          <div v-for="(team, tIdx) in teams" :key="tIdx" 
+            class="glass-card flex flex-col h-full min-h-[450px] relative transition-all"
+            :style="team.background ? { backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.9)), url(${team.background})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}"
+          >
+            <!-- Team Header -->
+            <div class="p-4 border-b border-white/5 flex justify-between items-center" :class="!team.background ? 'bg-white/5' : ''">
+              <input v-model="team.name" class="bg-transparent border-none text-primary font-black uppercase tracking-widest focus:outline-none w-full text-sm placeholder:text-primary/30" placeholder="Enter Team Name" />
+              <div class="flex items-center gap-1">
+                <button @click="triggerFileInput(tIdx)" class="text-on-surface-variant hover:text-white p-1 transition-colors" title="Change Background">
+                  <span class="material-symbols-outlined text-sm">image</span>
+                </button>
+                <button v-if="teams.length > 2" @click="removeTeam(tIdx)" class="text-on-surface-variant hover:text-red-400 p-1">
+                  <span class="material-symbols-outlined text-xs">close</span>
+                </button>
+              </div>
+              <input :id="`team-bg-${tIdx}`" type="file" class="hidden" @change="handleFileUpload($event, tIdx)" accept="image/*" />
+            </div>
+
+            <!-- Player List -->
+            <draggable 
+              v-model="team.players" 
+              group="players" 
+              item-key="id"
+              class="flex-1 p-3 space-y-2 min-h-[300px]"
+              ghost-class="opacity-50"
+              drag-class="scale-105"
+            >
+              <template #item="{element}">
+                <div class="p-3 bg-white/5 backdrop-blur-md rounded-xl border border-white/10 cursor-move hover:bg-white/20 transition-all flex items-center justify-between group">
+                  <div class="flex flex-col">
+                    <span class="text-xs font-bold text-white">{{ element.player_name }}</span>
+                    <span class="text-[10px] text-on-surface-variant/80 uppercase tracking-tighter">{{ element.position }}</span>
+                  </div>
+                  <span class="material-symbols-outlined text-xs text-on-surface-variant/50 group-hover:text-primary transition-colors">drag_indicator</span>
+                </div>
+              </template>
+            </draggable>
+
+            <!-- Team Footer -->
+            <div class="p-3 bg-black/40 text-center backdrop-blur-sm">
+              <span class="text-[10px] font-bold text-white uppercase tracking-widest">{{ team.players.length }} Players</span>
+            </div>
           </div>
-          <span class="font-bold text-sm uppercase tracking-widest">Add Team</span>
-        </button>
+
+          <!-- Add Team Button -->
+          <button v-if="teams.length < 6" @click="addTeam" class="h-[450px] rounded-3xl border-2 border-dashed border-white/5 flex flex-col items-center justify-center gap-4 text-on-surface-variant hover:border-primary/40 hover:text-primary transition-all group">
+            <div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-primary/10 transition-all">
+              <span class="material-symbols-outlined">add</span>
+            </div>
+            <span class="font-bold text-sm uppercase tracking-widest">Add Team</span>
+          </button>
+        </div>
       </div>
     </div>
   </AdminLayout>
@@ -274,5 +315,19 @@ onMounted(fetchTeams);
 
 @keyframes spin {
   to { transform: rotate(360deg); }
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
 }
 </style>
