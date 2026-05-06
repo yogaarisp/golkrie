@@ -43,7 +43,7 @@ class GolkrieController extends Controller
             'activeMatchId' => $activeMatchId,
             'settings' => \App\Models\Setting::select('key', 'value')->get()->pluck('value', 'key'),
             'sponsors' => \App\Models\Sponsor::where('is_active', true)->select('id', 'name', 'logo_url')->orderBy('order')->get()
-        ]);
+        ])->header('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=600');
     }
 
     public function checkMember(Request $request)
