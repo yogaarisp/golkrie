@@ -267,9 +267,9 @@ const formatTime = (dateString) => {
                       <span class="text-sm font-black text-white">Rp {{ match.price }}</span>
                     </div>
 
-                    <div v-if="settings.bank_account" class="mt-2">
-                      <button @click.stop="showPayment = !showPayment" 
-                        class="w-full flex items-center justify-between py-3 transition-all group"
+                    <div v-if="settings.bank_account" class="mt-4 pt-4 border-t border-white/5">
+                      <div @click="showPayment = !showPayment" 
+                        class="w-full flex items-center justify-between cursor-pointer group"
                       >
                         <div class="flex items-center gap-4">
                           <div class="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 border border-primary/20 group-hover:bg-primary/20 transition-colors">
@@ -280,7 +280,7 @@ const formatTime = (dateString) => {
                         <span class="material-symbols-outlined text-primary transition-transform duration-300" :class="showPayment ? 'rotate-180' : ''">
                           expand_more
                         </span>
-                      </button>
+                      </div>
 
                       <Transition name="slide-fade">
                         <div v-if="showPayment" class="mt-3 space-y-2">
