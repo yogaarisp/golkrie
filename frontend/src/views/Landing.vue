@@ -15,7 +15,8 @@ const settings = ref({
   app_tagline: 'Golek Kringet, Jalin Seduluran.',
   instagram_url: 'https://instagram.com/golkrie',
   whatsapp_contact: '08123456789',
-  hero_description: 'Tingkatkan skill dan jalin persaudaraan di lapangan hijau.'
+  hero_description: 'Tingkatkan skill dan jalin persaudaraan di lapangan hijau.',
+  about_description: ''
 });
 const sponsors = ref([]);
 
@@ -420,7 +421,7 @@ const formatTime = (dateString) => {
               <span class="text-primary">Jalin Seduluran.</span>
             </h2>
             <p class="text-on-surface-variant text-lg leading-relaxed mb-8">
-              {{ settings.hero_description || 'Golkrie adalah komunitas sepakbola yang berfokus pada kesehatan dan tali persaudaraan. Kami percaya bahwa olahraga adalah cara terbaik untuk menjaga tubuh tetap bugar sekaligus menambah relasi baru.' }}
+              {{ settings.about_description || 'Golkrie adalah komunitas sepakbola yang berfokus pada kesehatan dan tali persaudaraan. Kami percaya bahwa olahraga adalah cara terbaik untuk menjaga tubuh tetap bugar sekaligus menambah relasi baru.' }}
             </p>
             
             <div class="flex flex-wrap gap-4">

@@ -10,6 +10,7 @@ const settings = ref({
   instagram_url: '',
   whatsapp_contact: '',
   hero_description: '',
+  about_description: '',
   app_logo: '',
   app_favicon: '',
   bank_account: ''
@@ -143,7 +144,12 @@ const saveSettings = async () => {
 
           <div>
             <label class="block text-xs font-bold uppercase text-on-surface-variant mb-2">Hero Description (Halaman Depan)</label>
-            <textarea v-model="settings.hero_description" rows="3" class="w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 focus:outline-none focus:border-primary transition-all"></textarea>
+            <textarea v-model="settings.hero_description" rows="2" class="w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 focus:outline-none focus:border-primary transition-all"></textarea>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold uppercase text-on-surface-variant mb-2">About Us Description (Bagian Tentang Kami)</label>
+            <textarea v-model="settings.about_description" rows="4" class="w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 focus:outline-none focus:border-primary transition-all"></textarea>
           </div>
         </div>
 

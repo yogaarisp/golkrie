@@ -103,7 +103,7 @@ const isMenuOpen = ref(false);
           <div class="text-xl font-bold text-on-surface">{{ props.settings?.app_name || 'Golkrie' }}</div>
         </div>
         <div class="text-sm text-on-surface-variant text-center md:text-left">
-          {{ props.settings?.footer_text || '© 2024 Golkrie Community. Golek Kringet, Jalin Seduluran.' }}
+          {{ props.settings?.footer_text || '© 2026 Golkrie Community. Golek Kringet, Jalin Seduluran.' }}
         </div>
         <div class="flex gap-6">
           <a href="#" class="text-on-surface-variant hover:text-primary transition-colors text-sm">Privacy</a>

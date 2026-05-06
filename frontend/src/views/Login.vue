@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 
@@ -8,6 +8,18 @@ const email = ref('admin@keetech.my.id');
 const password = ref('password');
 const isLoading = ref(false);
 const error = ref('');
+const settings = ref({});
+
+const fetchSettings = async () => {
+  try {
+    const response = await axios.get('/api/landing'); // We can use the public landing API to get settings
+    settings.value = response.data.settings || {};
+  } catch (e) {
+    console.error('Failed to fetch settings');
+  }
+};
+
+onMounted(fetchSettings);
 
 const handleLogin = async () => {
   isLoading.value = true;
@@ -42,8 +54,9 @@ const handleLogin = async () => {
 
     <div class="w-full max-w-md z-10">
       <div class="text-center mb-10">
-        <div class="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-surface-container mb-6 shadow-2xl border border-white/5 group transition-all hover:scale-105">
-           <span class="material-symbols-outlined text-4xl text-primary group-hover:rotate-12 transition-transform">sports_soccer</span>
+        <div class="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-surface-container mb-6 shadow-2xl border border-white/5 group transition-all hover:scale-105 overflow-hidden">
+           <img v-if="settings.app_logo" :src="settings.app_logo" class="w-full h-full object-contain p-2" :alt="settings.app_name" />
+           <span v-else class="material-symbols-outlined text-4xl text-primary group-hover:rotate-12 transition-transform">sports_soccer</span>
         </div>
         <h1 class="text-4xl font-black text-on-surface tracking-tighter uppercase font-lexend mb-2">
           Golkrie <span class="text-primary">Admin</span>
@@ -98,7 +111,7 @@ const handleLogin = async () => {
       </div>
 
       <p class="text-center mt-8 text-on-surface-variant/50 text-xs font-bold uppercase tracking-widest">
-        &copy; 2024 Golkrie Community
+        &copy; 2026 Golkrie Community
       </p>
     </div>
   </div>
