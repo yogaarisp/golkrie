@@ -79,7 +79,6 @@ const handleLogin = async () => {
                 v-model="email"
                 type="email" 
                 required
-                autocomplete="email"
                 class="w-full bg-surface-container-high border border-white/5 rounded-2xl py-4 pl-12 pr-4 text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all placeholder:text-on-surface-variant/30"
                 placeholder="admin@example.com"
               />
@@ -94,7 +93,6 @@ const handleLogin = async () => {
                 v-model="password"
                 type="password" 
                 required
-                autocomplete="current-password"
                 class="w-full bg-surface-container-high border border-white/5 rounded-2xl py-4 pl-12 pr-4 text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all placeholder:text-on-surface-variant/30"
                 placeholder="••••••••"
               />

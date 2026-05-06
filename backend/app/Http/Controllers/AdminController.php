@@ -25,9 +25,11 @@ class AdminController extends Controller
                     ->get(),
             ]);
         } catch (\Exception $e) {
-            \Log::error('Admin dashboard error: ' . $e->getMessage());
-            \Log::error($e->getTraceAsString());
-            return response()->json(['message' => 'Internal Server Error', 'error' => $e->getMessage()], 500);
+            return response()->json([
+                'error' => 'Dashboard Error',
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ], 500);
         }
     }
 
