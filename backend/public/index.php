@@ -16,13 +16,14 @@ try {
     // Register the Composer autoloader...
     if (file_exists(__DIR__.'/../vendor/autoload.php')) {
         require __DIR__.'/../vendor/autoload.php';
-        if (file_exists(__DIR__.'/../vendor/symfony/polyfill-php84/bootstrap.php')) {
-            require_once __DIR__.'/../vendor/symfony/polyfill-php84/bootstrap.php';
-        }
     } else {
         require __DIR__.'/../../vendor/autoload.php';
-        if (file_exists(__DIR__.'/../../vendor/symfony/polyfill-php84/bootstrap.php')) {
-            require_once __DIR__.'/../../vendor/symfony/polyfill-php84/bootstrap.php';
+    }
+
+    // Manual Polyfill for PHP 8.4 request_parse_body (Fix for Vercel + Symfony 7.2)
+    if (!function_exists('request_parse_body')) {
+        function request_parse_body(?array $options = null): array {
+            return [$_POST, $_FILES];
         }
     }
 
