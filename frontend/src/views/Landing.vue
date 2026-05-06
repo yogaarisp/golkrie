@@ -45,18 +45,17 @@ const fetchLandingData = async () => {
       upcomingMatches.value = response.data.upcomingMatches || response.data.matches || [];
       sponsors.value = response.data.sponsors || [];
       
-      // Set first match as active squad by default
+      // Use initial squad data from first response instead of making another call
       if (upcomingMatches.value && upcomingMatches.value.length > 0) {
-        selectMatchForSquad(upcomingMatches.value[0]);
+        activeSquadMatch.value = upcomingMatches.value[0];
+        squadList.value = response.data.initialSquad || [];
       }
     }
   } catch (e) {
     console.error('Failed to fetch landing data:', e.response || e);
     // Ensure we still turn off loading even on total failure
   } finally {
-    setTimeout(() => {
-      loading.value = false;
-    }, 500); // Small delay to ensure render
+    loading.value = false;
   }
 };
 
@@ -156,7 +155,7 @@ const formatTime = (dateString) => {
         <!-- SECTION 1: HOME (Hero) -->
         <section id="home" class="relative h-[600px] md:h-[800px] flex items-center justify-center overflow-hidden">
           <div class="absolute inset-0 z-0">
-            <img alt="Football pitch" class="w-full h-full object-cover" src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&q=80&w=2000" />
+            <img alt="Football pitch" class="w-full h-full object-cover" src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&q=80&w=1200" />
             <div class="absolute inset-0 bg-gradient-to-b from-background/95 via-background/70 to-background"></div>
           </div>
           <div class="relative z-10 text-center px-6 max-w-5xl mx-auto">

@@ -41,8 +41,8 @@ class GolkrieController extends Controller
             'matchHistory' => $matchHistory,
             'initialSquad' => $squad,
             'activeMatchId' => $activeMatchId,
-            'settings' => \App\Models\Setting::all()->pluck('value', 'key'),
-            'sponsors' => \App\Models\Sponsor::where('is_active', true)->orderBy('order')->get()
+            'settings' => \App\Models\Setting::select('key', 'value')->get()->pluck('value', 'key'),
+            'sponsors' => \App\Models\Sponsor::where('is_active', true)->select('id', 'name', 'logo_url')->orderBy('order')->get()
         ]);
     }
 
