@@ -17,9 +17,12 @@ const settings = ref({
   whatsapp_contact: '08123456789',
   hero_description: 'Tingkatkan skill dan jalin persaudaraan di lapangan hijau.',
   about_description: '',
-  about_quote: ''
+  about_quote: '',
+  about_est: 'EST 2024',
+  about_hashtag: '#GolekKringet'
 });
 const sponsors = ref([]);
+const copiedId = ref(null);
 
 const isModalOpen = ref(false);
 const selectedMatchId = ref(null);
@@ -60,11 +63,12 @@ const fetchLandingData = async () => {
   }
 };
 
-const copyToClipboard = (text) => {
+const copyToClipboard = (text, id) => {
   navigator.clipboard.writeText(text).then(() => {
-    // Show feedback animation via class manipulation or local state if needed
-    // But we used a pure CSS hover/active approach in template for simplicity if possible,
-    // actually let's just make it show up for a second.
+    copiedId.value = id;
+    setTimeout(() => {
+      if (copiedId.value === id) copiedId.value = null;
+    }, 2000);
   });
 };
 
@@ -264,20 +268,24 @@ const formatTime = (dateString) => {
 
                     <div v-if="settings.bank_account" class="mt-4 space-y-2">
                       <div class="text-[9px] font-black uppercase tracking-[0.2em] text-primary mb-1.5 px-1">Payment Details</div>
-                      <div v-for="(line, idx) in settings.bank_account.split('\n').filter(l => l.trim())" :key="idx" 
-                        class="group relative flex items-center justify-between p-3 bg-primary/5 rounded-xl border border-primary/10 hover:bg-primary/10 transition-all cursor-pointer"
-                        @click.stop="copyToClipboard(line)"
+                      <div v-for="(line, idx) in settings.bank_account.split(/[\n|]/).filter(l => l.trim())" :key="idx" 
+                        class="group relative flex items-center justify-between p-3 bg-primary/5 rounded-xl border border-primary/10 hover:bg-primary/15 transition-all cursor-pointer overflow-hidden"
+                        @click.stop="copyToClipboard(line.trim(), idx)"
                       >
                         <div class="text-[10px] font-bold text-white/90 leading-tight pr-8">
-                          {{ line }}
+                          {{ line.trim() }}
                         </div>
-                        <div class="absolute right-3 opacity-40 group-hover:opacity-100 transition-opacity">
-                          <span class="material-symbols-outlined text-sm text-primary">content_copy</span>
+                        <div class="absolute right-3">
+                          <span class="material-symbols-outlined text-sm text-primary transition-all" :class="copiedId === idx ? 'scale-0 opacity-0' : 'opacity-40 group-hover:opacity-100'">content_copy</span>
                         </div>
                         
-                        <!-- Tooltip-like feedback -->
-                        <div class="copy-feedback absolute -top-8 left-1/2 -translate-x-1/2 bg-primary text-black text-[8px] font-black px-2 py-1 rounded opacity-0 pointer-events-none transition-all">
-                          COPIED!
+                        <!-- Animated "Copied" Overlay -->
+                        <div class="absolute inset-0 bg-primary flex items-center justify-center transition-all duration-300" 
+                          :class="copiedId === idx ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0'">
+                          <div class="flex items-center gap-2 text-black font-black text-[10px] uppercase tracking-tighter">
+                            <span class="material-symbols-outlined text-sm">check_circle</span>
+                            Copied to Clipboard!
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -506,8 +514,8 @@ const formatTime = (dateString) => {
               </p>
               <div class="h-[1px] w-full bg-outline-variant/30 mb-6"></div>
               <div class="flex items-center justify-between text-xs font-bold text-on-surface-variant">
-                <span>EST 2024</span>
-                <span class="text-primary">#GolekKringet</span>
+                <span>{{ settings.about_est || 'EST 2024' }}</span>
+                <span class="text-primary">{{ settings.about_hashtag || '#GolekKringet' }}</span>
               </div>
             </div>
           </div>
@@ -543,12 +551,5 @@ const formatTime = (dateString) => {
 /* Smooth Scrolling */
 html {
   scroll-behavior: smooth;
-}
-.copy-feedback {
-    transform: translate(-50%, 10px);
-}
-.group:active .copy-feedback {
-    opacity: 1 !important;
-    transform: translate(-50%, 0);
 }
 </style>

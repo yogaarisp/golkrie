@@ -12,6 +12,8 @@ const settings = ref({
   hero_description: '',
   about_description: '',
   about_quote: '',
+  about_est: 'EST 2024',
+  about_hashtag: '#GolekKringet',
   app_logo: '',
   app_favicon: '',
   bank_account: ''
@@ -151,7 +153,17 @@ const saveSettings = async () => {
           <div>
             <label class="block text-xs font-bold uppercase text-on-surface-variant mb-2">About Us Description (Bagian Tentang Kami)</label>
             <textarea v-model="settings.about_description" rows="4" class="w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 focus:outline-none focus:border-primary transition-all"></textarea>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label class="block text-xs font-bold uppercase text-on-surface-variant mb-2">Established Year (Tahun Berdiri)</label>
+              <input v-model="settings.about_est" type="text" placeholder="EST 2024" class="w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 focus:outline-none focus:border-primary transition-all" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase text-on-surface-variant mb-2">Community Hashtag</label>
+              <input v-model="settings.about_hashtag" type="text" placeholder="#GolekKringet" class="w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 focus:outline-none focus:border-primary transition-all" />
+            </div>
           </div>
+        </div>
 
           <div>
             <label class="block text-xs font-bold uppercase text-on-surface-variant mb-2">About Quote (Kata Bijak/Filosofi Komunitas)</label>
