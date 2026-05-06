@@ -195,7 +195,7 @@ const formatTime = (dateString) => {
 
         <!-- SECTION 2: SCHEDULE -->
         <section id="schedule" class="py-24 bg-background relative z-10">
-          <div class="px-6 max-w-7xl mx-auto mb-16 text-center">
+          <div class="px-6 max-w-7xl mx-auto mb-10 text-center">
             <h2 class="text-4xl md:text-5xl font-black text-white mb-4 tracking-tighter uppercase">Upcoming <span class="text-primary">Matches</span></h2>
             <div class="w-16 h-1.5 bg-primary mx-auto rounded-full mb-6"></div>
             <p class="text-on-surface-variant text-base">Pilih jadwal pertandingan dan amankan slot kamu sekarang.</p>
