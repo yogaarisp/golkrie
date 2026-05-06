@@ -266,21 +266,23 @@ const formatTime = (dateString) => {
                       <span class="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/60">Pemain (Player)</span>
                       <span class="text-sm font-black text-white">Rp {{ match.price }}</span>
                     </div>
+                  </div>
+                </div>
 
-                    <div v-if="settings.bank_account" class="mt-4 pt-4 border-t border-white/5">
-                      <div @click="showPayment = !showPayment" 
-                        class="w-full flex items-center justify-between cursor-pointer group"
-                      >
-                        <div class="flex items-center gap-4">
-                          <div class="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 border border-primary/20 group-hover:bg-primary/20 transition-colors">
-                            <span class="material-symbols-outlined text-primary text-lg">payments</span>
-                          </div>
-                          <span class="text-[10px] font-black uppercase tracking-widest text-primary group-hover:text-primary-light transition-colors">Informasi Pembayaran</span>
-                        </div>
-                        <span class="material-symbols-outlined text-primary transition-transform duration-300" :class="showPayment ? 'rotate-180' : ''">
-                          expand_more
-                        </span>
+                <div v-if="settings.bank_account" class="pt-4 border-t border-white/5">
+                  <div @click="showPayment = !showPayment" 
+                    class="w-full flex items-center justify-between cursor-pointer group"
+                  >
+                    <div class="flex items-center gap-4">
+                      <div class="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 border border-primary/20 group-hover:bg-primary/20 transition-colors">
+                        <span class="material-symbols-outlined text-primary text-lg">payments</span>
                       </div>
+                      <span class="text-[10px] font-black uppercase tracking-widest text-primary group-hover:text-primary-light transition-colors">Informasi Pembayaran</span>
+                    </div>
+                    <span class="material-symbols-outlined text-primary transition-transform duration-300" :class="showPayment ? 'rotate-180' : ''">
+                      expand_more
+                    </span>
+                  </div>
 
                       <Transition name="slide-fade">
                         <div v-if="showPayment" class="mt-3 space-y-2">
