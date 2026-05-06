@@ -60,6 +60,14 @@ const fetchLandingData = async () => {
   }
 };
 
+const copyToClipboard = (text) => {
+  navigator.clipboard.writeText(text).then(() => {
+    // Show feedback animation via class manipulation or local state if needed
+    // But we used a pure CSS hover/active approach in template for simplicity if possible,
+    // actually let's just make it show up for a second.
+  });
+};
+
 const selectMatchForSquad = async (match) => {
   if (!match) return;
   activeSquadMatch.value = match;
@@ -254,13 +262,23 @@ const formatTime = (dateString) => {
                       <span class="text-sm font-black text-white">Rp {{ match.price }}</span>
                     </div>
 
-                    <div v-if="settings.bank_account" class="mt-4 p-3 bg-primary/5 rounded-xl border border-primary/10 relative overflow-hidden">
-                      <div class="absolute top-0 right-0 p-1">
-                        <span class="material-symbols-outlined text-primary/20 text-xs">account_balance</span>
-                      </div>
-                      <div class="text-[9px] font-black uppercase tracking-[0.2em] text-primary mb-1.5">Payment Details</div>
-                      <div class="text-[10px] font-bold text-white/90 whitespace-pre-line leading-relaxed">
-                        {{ settings.bank_account }}
+                    <div v-if="settings.bank_account" class="mt-4 space-y-2">
+                      <div class="text-[9px] font-black uppercase tracking-[0.2em] text-primary mb-1.5 px-1">Payment Details</div>
+                      <div v-for="(line, idx) in settings.bank_account.split('\n').filter(l => l.trim())" :key="idx" 
+                        class="group relative flex items-center justify-between p-3 bg-primary/5 rounded-xl border border-primary/10 hover:bg-primary/10 transition-all cursor-pointer"
+                        @click.stop="copyToClipboard(line)"
+                      >
+                        <div class="text-[10px] font-bold text-white/90 leading-tight pr-8">
+                          {{ line }}
+                        </div>
+                        <div class="absolute right-3 opacity-40 group-hover:opacity-100 transition-opacity">
+                          <span class="material-symbols-outlined text-sm text-primary">content_copy</span>
+                        </div>
+                        
+                        <!-- Tooltip-like feedback -->
+                        <div class="copy-feedback absolute -top-8 left-1/2 -translate-x-1/2 bg-primary text-black text-[8px] font-black px-2 py-1 rounded opacity-0 pointer-events-none transition-all">
+                          COPIED!
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -525,5 +543,12 @@ const formatTime = (dateString) => {
 /* Smooth Scrolling */
 html {
   scroll-behavior: smooth;
+}
+.copy-feedback {
+    transform: translate(-50%, 10px);
+}
+.group:active .copy-feedback {
+    opacity: 1 !important;
+    transform: translate(-50%, 0);
 }
 </style>
