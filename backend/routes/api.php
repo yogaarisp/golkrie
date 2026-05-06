@@ -4,10 +4,14 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\GolkrieController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\UploadController;
+use App\Http\Controllers\AuthController;
 
 Route::get('/landing', [GolkrieController::class, 'index']);
 Route::post('/check-member', [GolkrieController::class, 'checkMember']);
 Route::post('/register', [GolkrieController::class, 'register']);
+
+Route::post('/login', [AuthController::class, 'login']);
+
 Route::get('/debug', function() {
     try {
         \DB::connection()->getPdo();
@@ -25,7 +29,10 @@ Route::get('/debug', function() {
     }
 });
 
-Route::prefix('admin')->group(function () {
+Route::middleware('auth:sanctum')->prefix('admin')->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/me', [AuthController::class, 'me']);
+    
     Route::post('/upload', [UploadController::class, 'upload']);
     Route::get('/dashboard', [AdminController::class, 'index']);
     Route::post('/registrations/{registration}/accept', [AdminController::class, 'accept']);

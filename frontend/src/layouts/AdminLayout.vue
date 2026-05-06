@@ -1,4 +1,21 @@
 <script setup>
+import { useRouter } from 'vue-router';
+import axios from 'axios';
+
+const router = useRouter();
+
+const handleLogout = async () => {
+  try {
+    await axios.post('/api/admin/logout');
+  } catch (e) {
+    console.error('Logout failed', e);
+  } finally {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    delete axios.defaults.headers.common['Authorization'];
+    router.push('/login');
+  }
+};
 </script>
 
 <template>
@@ -6,9 +23,9 @@
     <!-- Top Mobile Header -->
     <header class="md:hidden flex items-center justify-between px-6 h-16 bg-surface-container border-b border-outline-variant/30 sticky top-0 z-40">
       <router-link to="/" class="text-xl font-black text-primary uppercase font-lexend tracking-tighter">Golkrie Admin</router-link>
-      <router-link to="/" class="p-2 text-on-surface-variant">
-        <span class="material-symbols-outlined">logout</span>
-      </router-link>
+      <button @click="handleLogout" class="p-2 text-on-surface-variant">
+        <span class="material-symbols-outlined text-red-400">logout</span>
+      </button>
     </header>
 
     <!-- Sidebar (Desktop) -->
@@ -72,10 +89,10 @@
       </nav>
 
       <div class="p-6">
-        <router-link to="/" class="flex items-center justify-center gap-2 w-full py-4 rounded-2xl bg-surface-container border border-outline-variant/30 text-on-surface-variant hover:text-red-400 hover:border-red-400/30 transition-all group">
+        <button @click="handleLogout" class="flex items-center justify-center gap-2 w-full py-4 rounded-2xl bg-surface-container border border-outline-variant/30 text-on-surface-variant hover:text-red-400 hover:border-red-400/30 transition-all group">
           <span class="material-symbols-outlined text-xl group-hover:-translate-x-1 transition-transform">logout</span>
-          <span class="font-bold text-sm">Exit Admin</span>
-        </router-link>
+          <span class="font-bold text-sm">Logout</span>
+        </button>
       </div>
     </aside>
 
