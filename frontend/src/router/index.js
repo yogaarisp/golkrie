@@ -6,6 +6,7 @@ import AdminMatches from '../views/AdminMatches.vue'
 import AdminSettings from '../views/AdminSettings.vue'
 import AdminMembers from '../views/AdminMembers.vue'
 import AdminSponsors from '../views/AdminSponsors.vue'
+import AdminTeams from '../views/AdminTeams.vue'
 
 const routes = [
   {
@@ -46,6 +47,12 @@ const routes = [
     path: '/admin/sponsors',
     name: 'AdminSponsors',
     component: AdminSponsors,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/admin/matches/:id/teams',
+    name: 'AdminTeams',
+    component: AdminTeams,
     meta: { requiresAuth: true }
   }
 ]

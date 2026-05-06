@@ -202,6 +202,10 @@ const updateStatus = async (id, status) => {
             >
               Set Upcoming
             </button>
+            <router-link :to="`/admin/matches/${match.id}/teams`" class="flex-1 bg-white/5 text-on-surface-variant py-2 rounded-lg font-bold text-xs hover:bg-white/10 text-center flex items-center justify-center gap-1">
+              <span class="material-symbols-outlined text-sm">groups</span>
+              Teams
+            </router-link>
         </div>
       </div>
     </div>

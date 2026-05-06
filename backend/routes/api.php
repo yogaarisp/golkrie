@@ -5,6 +5,7 @@ use App\Http\Controllers\GolkrieController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\UploadController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Admin\TeamController;
 
 Route::get('/landing', [GolkrieController::class, 'index']);
 Route::post('/check-member', [GolkrieController::class, 'checkMember']);
@@ -38,4 +39,9 @@ Route::middleware('auth:sanctum')->prefix('admin')->group(function () {
 
     Route::get('/settings', [AdminController::class, 'getSettings']);
     Route::post('/settings', [AdminController::class, 'updateSettings']);
+
+    // Team Management
+    Route::get('/matches/{match}/teams', [TeamController::class, 'index']);
+    Route::post('/matches/{match}/shuffle', [TeamController::class, 'shuffle']);
+    Route::post('/matches/{match}/teams', [TeamController::class, 'updateTeams']);
 });
