@@ -16,7 +16,8 @@ const settings = ref({
   instagram_url: 'https://instagram.com/golkrie',
   whatsapp_contact: '08123456789',
   hero_description: 'Tingkatkan skill dan jalin persaudaraan di lapangan hijau.',
-  about_description: ''
+  about_description: '',
+  about_quote: ''
 });
 const sponsors = ref([]);
 
@@ -242,9 +243,9 @@ const formatTime = (dateString) => {
                   <div class="flex flex-col">
                     <span class="text-xs font-bold text-white">Rp {{ match.price_gk }} <span class="text-[9px] font-normal opacity-70">(GK)</span></span>
                     <span class="text-xs font-bold text-white">Rp {{ match.price }} <span class="text-[9px] font-normal opacity-70">(Player Lain)</span></span>
-                    <span v-if="settings.bank_account" class="text-[9px] font-bold text-primary mt-1 px-2 py-0.5 bg-primary/10 rounded-md border border-primary/20 w-fit">
-                      Transfer: {{ settings.bank_account }}
-                    </span>
+                    <div v-if="settings.bank_account" class="text-[9px] font-bold text-primary mt-1 px-2 py-1 bg-primary/10 rounded-md border border-primary/20 w-fit whitespace-pre-line">
+                      {{ settings.bank_account }}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -456,14 +457,17 @@ const formatTime = (dateString) => {
             <div class="absolute -inset-4 bg-primary/20 blur-3xl rounded-full"></div>
             <div class="relative glass-card p-10 overflow-hidden group">
               <div class="flex items-center gap-6 mb-8">
-                <div class="w-20 h-20 bg-primary rounded-3xl flex items-center justify-center text-white text-4xl font-black">G</div>
+                <div class="w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center overflow-hidden border border-primary/20 p-2 shadow-inner">
+                  <img v-if="settings.app_logo" :src="settings.app_logo" class="w-full h-full object-contain" />
+                  <span v-else class="text-white text-4xl font-black">G</span>
+                </div>
                 <div>
                   <h3 class="text-2xl font-black text-white uppercase tracking-tighter">{{ settings.app_name || 'GOLKRIE' }}</h3>
                   <p class="text-primary font-bold text-sm uppercase tracking-widest">{{ settings.app_tagline || 'Community' }}</p>
                 </div>
               </div>
               <p class="text-on-surface-variant italic leading-relaxed mb-6">
-                "Bukan sekadar mengejar bola, tapi mengejar keringat dan mempererat tali silaturahmi antar pecinta sepakbola di Semarang."
+                "{{ settings.about_quote || 'Bukan sekadar mengejar bola, tapi mengejar keringat dan mempererat tali silaturahmi antar pecinta sepakbola di Semarang.' }}"
               </p>
               <div class="h-[1px] w-full bg-outline-variant/30 mb-6"></div>
               <div class="flex items-center justify-between text-xs font-bold text-on-surface-variant">

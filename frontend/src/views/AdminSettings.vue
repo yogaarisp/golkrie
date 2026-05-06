@@ -11,6 +11,7 @@ const settings = ref({
   whatsapp_contact: '',
   hero_description: '',
   about_description: '',
+  about_quote: '',
   app_logo: '',
   app_favicon: '',
   bank_account: ''
@@ -151,6 +152,11 @@ const saveSettings = async () => {
             <label class="block text-xs font-bold uppercase text-on-surface-variant mb-2">About Us Description (Bagian Tentang Kami)</label>
             <textarea v-model="settings.about_description" rows="4" class="w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 focus:outline-none focus:border-primary transition-all"></textarea>
           </div>
+
+          <div>
+            <label class="block text-xs font-bold uppercase text-on-surface-variant mb-2">About Quote (Kata Bijak/Filosofi Komunitas)</label>
+            <textarea v-model="settings.about_quote" rows="3" class="w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 focus:outline-none focus:border-primary transition-all"></textarea>
+          </div>
         </div>
 
         <!-- Footer & Social -->
@@ -175,8 +181,8 @@ const saveSettings = async () => {
               <input v-model="settings.whatsapp_contact" type="text" class="w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 focus:outline-none focus:border-primary transition-all" />
             </div>
             <div class="md:col-span-2">
-              <label class="block text-xs font-bold uppercase text-on-surface-variant mb-2">Nomor Rekening / Metode Pembayaran</label>
-              <input v-model="settings.bank_account" type="text" placeholder="BCA 123456789 a/n Golkrie" class="w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 focus:outline-none focus:border-primary transition-all font-mono" />
+              <label class="block text-xs font-bold uppercase text-on-surface-variant mb-2">Daftar Nomor Rekening / Metode Pembayaran</label>
+              <textarea v-model="settings.bank_account" rows="3" placeholder="Contoh:&#10;BCA 123456789 a/n Golkrie&#10;Dana 08123456789 a/n Golkrie" class="w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 focus:outline-none focus:border-primary transition-all font-mono"></textarea>
             </div>
           </div>
         </div>
