@@ -13,20 +13,60 @@ Route::post('/register', [GolkrieController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
 Route::get('/debug', function() {
+    $results = ['php_version' => PHP_VERSION];
+    
+    // Test 1: Database
     try {
         \DB::connection()->getPdo();
-        return [
-            'database' => 'CONNECTED!',
-            'match_count' => \App\Models\GolkrieMatch::count(),
-            'total_members' => \App\Models\Member::count(),
-            'current_time' => now()->toDateTimeString()
-        ];
-    } catch (\Exception $e) {
-        return [
-            'database' => 'FAILED!',
-            'error' => $e->getMessage()
-        ];
+        $results['database'] = 'CONNECTED!';
+        $results['match_count'] = \App\Models\GolkrieMatch::count();
+        $results['total_members'] = \App\Models\Member::count();
+    } catch (\Throwable $e) {
+        $results['database'] = 'FAILED: ' . $e->getMessage();
     }
+    
+    // Test 2: User model + Sanctum
+    try {
+        $user = \App\Models\User::first();
+        $results['user_model'] = $user ? 'OK - ' . $user->email : 'NO USERS';
+        $results['user_has_api_tokens'] = method_exists($user, 'createToken') ? 'YES' : 'NO';
+    } catch (\Throwable $e) {
+        $results['user_model'] = 'FAILED: ' . $e->getMessage();
+    }
+    
+    // Test 3: Personal Access Tokens table
+    try {
+        $tokenCount = \DB::table('personal_access_tokens')->count();
+        $results['tokens_table'] = 'OK - ' . $tokenCount . ' tokens';
+    } catch (\Throwable $e) {
+        $results['tokens_table'] = 'FAILED: ' . $e->getMessage();
+    }
+
+    // Test 4: AdminController direct call
+    try {
+        $controller = new \App\Http\Controllers\AdminController();
+        $results['admin_controller'] = 'LOADED OK';
+    } catch (\Throwable $e) {
+        $results['admin_controller'] = 'FAILED: ' . $e->getMessage();
+    }
+
+    // Test 5: AuthController direct call
+    try {
+        $controller = new \App\Http\Controllers\AuthController();
+        $results['auth_controller'] = 'LOADED OK';
+    } catch (\Throwable $e) {
+        $results['auth_controller'] = 'FAILED: ' . $e->getMessage();
+    }
+    
+    // Test 6: Session driver
+    try {
+        $results['session_driver'] = config('session.driver');
+        $results['app_key_set'] = !empty(config('app.key')) ? 'YES' : 'NO';
+    } catch (\Throwable $e) {
+        $results['session_config'] = 'FAILED: ' . $e->getMessage();
+    }
+
+    return response()->json($results);
 });
 
 Route::middleware('auth:sanctum')->prefix('admin')->group(function () {
