@@ -10,7 +10,7 @@ Route::get('/landing', [GolkrieController::class, 'index']);
 Route::post('/check-member', [GolkrieController::class, 'checkMember']);
 Route::post('/register', [GolkrieController::class, 'register']);
 
-Route::post('/login', [AuthController::class, 'login']);
+Route::post('/login', [AuthController::class, 'login'])->name('login');
 
 Route::get('/debug', function() {
     $results = ['php_version' => PHP_VERSION];
