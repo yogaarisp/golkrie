@@ -321,10 +321,8 @@ const formatTime = (dateString) => {
                       </Transition>
                     </div>
                   </div>
-                </div>
-              </div>
               
-              <div class="w-full bg-white/5 h-2 rounded-full mb-6 overflow-hidden border border-white/5">
+                  <div class="w-full bg-white/5 h-2 rounded-full mb-6 overflow-hidden border border-white/5">
                 <div class="bg-primary h-full rounded-full progress-glow" :style="{width: `${(match.registrations_count / match.quota) * 100}%`}"></div>
               </div>
 
