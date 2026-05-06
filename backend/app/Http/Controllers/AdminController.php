@@ -12,25 +12,17 @@ class AdminController extends Controller
 {
     public function index()
     {
-        try {
-            return response()->json([
-                'stats' => [
-                    'totalMembers' => Member::count(),
-                    'upcomingMatches' => GolkrieMatch::where('status', 'upcoming')->count(),
-                    'finishedMatches' => GolkrieMatch::where('status', 'finished')->count(),
-                ],
-                'pendingRegistrations' => Registration::where('is_accepted', false)
-                    ->with(['match', 'member'])
-                    ->orderBy('created_at', 'desc')
-                    ->get(),
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'error' => 'Dashboard Error',
-                'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ], 500);
-        }
+        return response()->json([
+            'stats' => [
+                'totalMembers' => Member::count(),
+                'upcomingMatches' => GolkrieMatch::where('status', 'upcoming')->count(),
+                'finishedMatches' => GolkrieMatch::where('status', 'finished')->count(),
+            ],
+            'pendingRegistrations' => Registration::where('is_accepted', false)
+                ->with(['match', 'member'])
+                ->orderBy('created_at', 'desc')
+                ->get(),
+        ]);
     }
 
     public function accept(Registration $registration)
