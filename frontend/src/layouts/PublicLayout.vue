@@ -58,7 +58,7 @@ const isMenuOpen = ref(false);
     </main>
 
     <!-- Bottom Navigation (Mobile Only) -->
-    <nav class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-surface-container/90 backdrop-blur-xl border-t border-white/5 pb-safe">
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-surface-container/80 backdrop-blur-md border-t border-outline-variant/30 pb-safe">
         <div class="flex justify-around items-center h-20 px-4 relative">
             <!-- Home -->
             <router-link to="/" class="flex flex-col items-center gap-1 transition-all" :class="$route.path === '/' ? 'text-primary' : 'text-on-surface-variant'">
