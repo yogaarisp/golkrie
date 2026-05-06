@@ -267,17 +267,17 @@ const formatTime = (dateString) => {
                       <span class="text-sm font-black text-white">Rp {{ match.price }}</span>
                     </div>
 
-                    <div v-if="settings.bank_account" class="mt-5">
+                    <div v-if="settings.bank_account" class="mt-2">
                       <button @click.stop="showPayment = !showPayment" 
-                        class="w-full flex items-center justify-between p-2.5 bg-primary/5 rounded-2xl border border-primary/10 hover:bg-primary/10 transition-all group"
+                        class="w-full flex items-center justify-between py-3 transition-all group"
                       >
                         <div class="flex items-center gap-4">
-                          <div class="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 border border-primary/20">
+                          <div class="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 border border-primary/20 group-hover:bg-primary/20 transition-colors">
                             <span class="material-symbols-outlined text-primary text-lg">payments</span>
                           </div>
-                          <span class="text-[10px] font-black uppercase tracking-widest text-primary">Informasi Pembayaran</span>
+                          <span class="text-[10px] font-black uppercase tracking-widest text-primary group-hover:text-primary-light transition-colors">Informasi Pembayaran</span>
                         </div>
-                        <span class="material-symbols-outlined text-primary transition-transform duration-300 mr-2" :class="showPayment ? 'rotate-180' : ''">
+                        <span class="material-symbols-outlined text-primary transition-transform duration-300" :class="showPayment ? 'rotate-180' : ''">
                           expand_more
                         </span>
                       </button>
