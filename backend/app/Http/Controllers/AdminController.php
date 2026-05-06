@@ -12,17 +12,23 @@ class AdminController extends Controller
 {
     public function index()
     {
-        return response()->json([
-            'stats' => [
-                'totalMembers' => Member::count(),
-                'upcomingMatches' => GolkrieMatch::where('status', 'upcoming')->count(),
-                'finishedMatches' => GolkrieMatch::where('status', 'finished')->count(),
-            ],
-            'pendingRegistrations' => Registration::where('is_accepted', false)
-                ->with(['match', 'member'])
-                ->orderBy('created_at', 'desc')
-                ->get(),
-        ]);
+        try {
+            return response()->json([
+                'stats' => [
+                    'totalMembers' => Member::count(),
+                    'upcomingMatches' => GolkrieMatch::where('status', 'upcoming')->count(),
+                    'finishedMatches' => GolkrieMatch::where('status', 'finished')->count(),
+                ],
+                'pendingRegistrations' => Registration::where('is_accepted', false)
+                    ->with(['match', 'member'])
+                    ->orderBy('created_at', 'desc')
+                    ->get(),
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Admin dashboard error: ' . $e->getMessage());
+            \Log::error($e->getTraceAsString());
+            return response()->json(['message' => 'Internal Server Error', 'error' => $e->getMessage()], 500);
+        }
     }
 
     public function accept(Registration $registration)
