@@ -12,57 +12,69 @@
     </header>
 
     <!-- Sidebar (Desktop) -->
-    <aside class="w-64 bg-surface-container border-r border-outline-variant/30 hidden md:flex flex-col sticky top-0 h-screen">
-      <div class="p-6">
-        <router-link to="/" class="text-2xl font-black text-primary uppercase font-lexend">Golkrie Admin</router-link>
+    <aside class="w-72 bg-surface-container-low border-r border-outline-variant/20 hidden md:flex flex-col sticky top-0 h-screen">
+      <div class="p-8">
+        <router-link to="/" class="flex flex-col">
+          <span class="text-xs font-bold text-primary tracking-[0.3em] uppercase mb-1">Golkrie</span>
+          <span class="text-2xl font-black text-white uppercase font-lexend tracking-tighter">Control Panel</span>
+        </router-link>
       </div>
       
-      <nav class="flex-1 px-4 py-4 space-y-2">
+      <nav class="flex-1 px-4 py-2 space-y-1">
         <router-link to="/admin" 
-          class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-white/5 text-on-surface-variant hover:text-white"
-          active-class="bg-primary-container !text-on-primary-container"
+          class="flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all duration-300 group"
+          active-class="bg-primary text-black shadow-lg shadow-primary/20"
+          :class="$route.path === '/admin' ? '' : 'text-on-surface-variant hover:bg-white/5 hover:text-white'"
         >
-          <span class="material-symbols-outlined">dashboard</span>
-          <span class="font-bold">Dashboard</span>
+          <span class="material-symbols-outlined text-2xl">dashboard</span>
+          <span class="font-bold tracking-tight">Dashboard</span>
         </router-link>
         
         <router-link to="/admin/matches" 
-          class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-white/5 text-on-surface-variant hover:text-white"
-          active-class="bg-primary-container !text-on-primary-container"
+          class="flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all duration-300 group"
+          active-class="bg-primary text-black shadow-lg shadow-primary/20"
+          :class="$route.path === '/admin/matches' ? '' : 'text-on-surface-variant hover:bg-white/5 hover:text-white'"
         >
-          <span class="material-symbols-outlined">sports_soccer</span>
-          <span class="font-bold">Matches</span>
+          <span class="material-symbols-outlined text-2xl">sports_soccer</span>
+          <span class="font-bold tracking-tight">Manage Matches</span>
         </router-link>
 
         <router-link to="/admin/members" 
-          class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-white/5 text-on-surface-variant hover:text-white"
-          active-class="bg-primary-container !text-on-primary-container"
+          class="flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all duration-300 group"
+          active-class="bg-primary text-black shadow-lg shadow-primary/20"
+          :class="$route.path === '/admin/members' ? '' : 'text-on-surface-variant hover:bg-white/5 hover:text-white'"
         >
-          <span class="material-symbols-outlined">group</span>
-          <span class="font-bold">Members</span>
+          <span class="material-symbols-outlined text-2xl">group</span>
+          <span class="font-bold tracking-tight">Members List</span>
         </router-link>
 
         <router-link to="/admin/sponsors" 
-          class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-white/5 text-on-surface-variant hover:text-white"
-          active-class="bg-primary-container !text-on-primary-container"
+          class="flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all duration-300 group"
+          active-class="bg-primary text-black shadow-lg shadow-primary/20"
+          :class="$route.path === '/admin/sponsors' ? '' : 'text-on-surface-variant hover:bg-white/5 hover:text-white'"
         >
-          <span class="material-symbols-outlined">handshake</span>
-          <span class="font-bold">Sponsors</span>
+          <span class="material-symbols-outlined text-2xl">handshake</span>
+          <span class="font-bold tracking-tight">Our Sponsors</span>
         </router-link>
 
+        <div class="pt-6 pb-2">
+          <div class="px-4 text-[10px] font-black uppercase text-white/20 tracking-widest">Configuration</div>
+        </div>
+
         <router-link to="/admin/settings" 
-          class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-white/5 text-on-surface-variant hover:text-white"
-          active-class="bg-primary-container !text-on-primary-container"
+          class="flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all duration-300 group"
+          active-class="bg-primary text-black shadow-lg shadow-primary/20"
+          :class="$route.path === '/admin/settings' ? '' : 'text-on-surface-variant hover:bg-white/5 hover:text-white'"
         >
-          <span class="material-symbols-outlined">settings</span>
-          <span class="font-bold">Settings</span>
+          <span class="material-symbols-outlined text-2xl">settings</span>
+          <span class="font-bold tracking-tight">Global Settings</span>
         </router-link>
       </nav>
 
-      <div class="p-4 border-t border-outline-variant/30">
-        <router-link to="/" class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:text-red-400 transition-all">
-          <span class="material-symbols-outlined">logout</span>
-          <span class="font-bold">Back to Site</span>
+      <div class="p-6">
+        <router-link to="/" class="flex items-center justify-center gap-2 w-full py-4 rounded-2xl bg-surface-container border border-outline-variant/30 text-on-surface-variant hover:text-red-400 hover:border-red-400/30 transition-all group">
+          <span class="material-symbols-outlined text-xl group-hover:-translate-x-1 transition-transform">logout</span>
+          <span class="font-bold text-sm">Exit Admin</span>
         </router-link>
       </div>
     </aside>
