@@ -19,6 +19,7 @@ const settings = ref({
   bank_account: ''
 });
 
+const bankAccounts = ref(['']);
 const loading = ref(true);
 const saving = ref(false);
 const logoLoading = ref(false);
@@ -52,10 +53,27 @@ const fetchSettings = async () => {
   try {
     const response = await axios.get('/api/admin/settings');
     settings.value = { ...settings.value, ...response.data.settings };
+    
+    if (settings.value.bank_account) {
+      const split = settings.value.bank_account.split(/[\n|]/).map(s => s.trim()).filter(s => s);
+      if (split.length > 0) bankAccounts.value = split;
+    }
   } catch (e) {
     console.error('Failed to fetch settings', e);
   } finally {
     loading.value = false;
+  }
+};
+
+const addAccount = () => {
+  bankAccounts.value.push('');
+};
+
+const removeAccount = (index) => {
+  if (bankAccounts.value.length > 1) {
+    bankAccounts.value.splice(index, 1);
+  } else {
+    bankAccounts.value[0] = '';
   }
 };
 
@@ -64,6 +82,7 @@ onMounted(fetchSettings);
 const saveSettings = async () => {
   saving.value = true;
   try {
+    settings.value.bank_account = bankAccounts.value.filter(s => s.trim()).join(' | ');
     await axios.post('/api/admin/settings', settings.value);
     alert('Settings updated successfully!');
   } catch (e) {
@@ -192,9 +211,25 @@ const saveSettings = async () => {
               <label class="block text-xs font-bold uppercase text-on-surface-variant mb-2">WhatsApp Contact</label>
               <input v-model="settings.whatsapp_contact" type="text" class="w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 focus:outline-none focus:border-primary transition-all" />
             </div>
-            <div class="md:col-span-2">
+            <div class="md:col-span-2 space-y-3">
               <label class="block text-xs font-bold uppercase text-on-surface-variant mb-2">Daftar Nomor Rekening / Metode Pembayaran</label>
-              <textarea v-model="settings.bank_account" rows="3" placeholder="Contoh:&#10;BCA 123456789 a/n Golkrie&#10;Dana 08123456789 a/n Golkrie" class="w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 focus:outline-none focus:border-primary transition-all font-mono"></textarea>
+              
+              <div v-for="(acc, index) in bankAccounts" :key="index" class="flex items-center gap-3">
+                <div class="relative flex-1">
+                  <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <span class="material-symbols-outlined text-sm text-primary opacity-50">account_balance</span>
+                  </div>
+                  <input v-model="bankAccounts[index]" type="text" placeholder="Contoh: BCA 123456789 a/n Golkrie" class="w-full bg-surface-container border border-outline-variant rounded-xl pl-11 pr-4 py-3 focus:outline-none focus:border-primary transition-all font-mono text-sm" />
+                </div>
+                <button @click.prevent="removeAccount(index)" class="w-10 h-10 flex items-center justify-center rounded-xl border border-outline-variant text-error hover:bg-error/10 transition-all shrink-0">
+                  <span class="material-symbols-outlined text-sm">delete</span>
+                </button>
+              </div>
+
+              <button @click.prevent="addAccount" class="flex items-center gap-2 text-xs font-bold text-primary hover:opacity-70 transition-all pt-2">
+                <span class="material-symbols-outlined text-sm">add_circle</span>
+                Tambah Nomor Rekening Baru
+              </button>
             </div>
           </div>
         </div>
