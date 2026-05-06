@@ -12,10 +12,24 @@ $app = Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->statefulApi();
+        // Only use stateful API on local dev (session-based).
+        // On Vercel (serverless), we rely purely on Bearer token auth.
+        $isVercel = isset($_SERVER['VERCEL']) || getenv('VERCEL') || isset($_ENV['VERCEL']) || isset($_SERVER['VERCEL_URL']);
+        if (!$isVercel) {
+            $middleware->statefulApi();
+        }
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        // Always return JSON for API requests
+        $exceptions->renderable(function (\Throwable $e, $request) {
+            if ($request->is('api/*') || $request->expectsJson()) {
+                $status = method_exists($e, 'getStatusCode') ? $e->getStatusCode() : 500;
+                return response()->json([
+                    'message' => $e->getMessage(),
+                    'exception' => get_class($e),
+                ], $status);
+            }
+        });
     })->create();
 
 if (isset($_SERVER['VERCEL']) || getenv('VERCEL') || isset($_ENV['VERCEL']) || isset($_SERVER['VERCEL_URL'])) {
