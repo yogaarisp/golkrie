@@ -18,6 +18,7 @@ return new class extends Migration
             'whatsapp_contact' => '08123456789',
             'hero_description' => 'Tingkatkan skill dan jalin persaudaraan di lapangan hijau.',
             'about_description' => 'Golkrie adalah komunitas sepakbola yang berfokus pada kesehatan dan tali persaudaraan. Kami percaya bahwa olahraga adalah cara terbaik untuk menjaga tubuh tetap bugar sekaligus menambah relasi baru.',
+            'about_quote' => 'Bukan sekadar mengejar bola, tapi mengejar keringat dan mempererat tali silaturahmi antar pecinta sepakbola di Semarang.',
             'footer_text' => '© 2026 GOLKRIE COMMUNITY. Golek Kringet, Jalin Seduluran.',
         ];
 
