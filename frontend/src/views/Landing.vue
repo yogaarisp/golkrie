@@ -167,7 +167,7 @@ const formatTime = (dateString) => {
     
     <div v-else>
         <!-- SECTION 1: HOME (Hero) -->
-        <section id="home" class="relative h-[600px] md:h-[800px] flex items-center justify-center overflow-hidden">
+        <section id="home" class="relative h-[600px] md:h-[800px] flex items-start justify-center pt-24 md:pt-40 overflow-hidden">
           <div class="absolute inset-0 z-0">
             <img alt="Football pitch" class="w-full h-full object-cover" src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&q=80&w=1200" />
             <div class="absolute inset-0 bg-gradient-to-b from-background/95 via-background/70 to-background"></div>
