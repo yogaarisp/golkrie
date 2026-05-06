@@ -240,7 +240,7 @@ const formatTime = (dateString) => {
                   </div>
                   <span class="text-sm font-black text-white tracking-tight">
                     {{ formatTime(match.date_time) }} 
-                    <span v-if="match.end_time" class="opacity-40 mx-1">/</span>
+                    <span v-if="match.end_time" class="opacity-40 mx-1">-</span>
                     <span v-if="match.end_time">{{ formatTime(match.end_time) }}</span>
                   </span>
                 </div>
