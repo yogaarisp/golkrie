@@ -266,25 +266,36 @@ const formatTime = (dateString) => {
                       <span class="text-sm font-black text-white">Rp {{ match.price }}</span>
                     </div>
 
-                    <div v-if="settings.bank_account" class="mt-4 space-y-2">
-                      <div class="text-[9px] font-black uppercase tracking-[0.2em] text-primary mb-1.5 px-1">Payment Details</div>
+                    <div v-if="settings.bank_account" class="mt-5 space-y-2">
+                      <div class="text-[9px] font-black uppercase tracking-[0.2em] text-primary/60 mb-2 px-1">Payment Options</div>
                       <div v-for="(line, idx) in settings.bank_account.split(/[\n|]/).filter(l => l.trim())" :key="idx" 
-                        class="group relative flex items-center justify-between p-3 bg-primary/5 rounded-xl border border-primary/10 hover:bg-primary/15 transition-all cursor-pointer overflow-hidden"
+                        class="group relative flex items-center justify-between p-3 bg-surface-container/50 rounded-2xl border border-white/5 hover:bg-primary/10 hover:border-primary/20 transition-all cursor-pointer overflow-hidden"
                         @click.stop="copyToClipboard(line.trim(), idx)"
                       >
-                        <div class="text-[10px] font-bold text-white/90 leading-tight pr-8">
-                          {{ line.trim() }}
+                        <div class="flex items-center gap-3">
+                          <div class="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 border border-primary/20 transition-colors group-hover:bg-primary/20">
+                            <span class="material-symbols-outlined text-primary text-base">account_balance</span>
+                          </div>
+                          <div class="flex flex-col">
+                            <span class="text-[11px] font-black text-white tracking-tight leading-none mb-1">
+                              {{ line.split(' a.n ')[0] }}
+                            </span>
+                            <span v-if="line.includes(' a.n ')" class="text-[8px] font-bold text-on-surface-variant/50 uppercase tracking-tighter">
+                              a.n {{ line.split(' a.n ')[1] }}
+                            </span>
+                          </div>
                         </div>
-                        <div class="absolute right-3">
-                          <span class="material-symbols-outlined text-sm text-primary transition-all" :class="copiedId === idx ? 'scale-0 opacity-0' : 'opacity-40 group-hover:opacity-100'">content_copy</span>
+
+                        <div class="shrink-0 ml-4">
+                          <span class="material-symbols-outlined text-sm text-primary transition-all" :class="copiedId === idx ? 'scale-0 opacity-0' : 'opacity-20 group-hover:opacity-100'">content_copy</span>
                         </div>
                         
-                        <!-- Animated "Copied" Overlay -->
+                        <!-- Animated Success Overlay -->
                         <div class="absolute inset-0 bg-primary flex items-center justify-center transition-all duration-300" 
                           :class="copiedId === idx ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0'">
                           <div class="flex items-center gap-2 text-black font-black text-[10px] uppercase tracking-tighter">
                             <span class="material-symbols-outlined text-sm">check_circle</span>
-                            Copied to Clipboard!
+                            Copied!
                           </div>
                         </div>
                       </div>
