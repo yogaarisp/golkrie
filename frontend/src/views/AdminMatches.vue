@@ -38,9 +38,9 @@ watch(() => matchForm.value.title, (newTitle) => {
     matchForm.value.quota = 44;
   } else if (newTitle === 'Mini Soccer' || newTitle === 'Futsal') {
     matchForm.value.quota_gk = 2;
-    matchForm.value.quota_df = 4;
-    matchForm.value.quota_mf = 4;
-    matchForm.value.quota_fw = 4;
+    matchForm.value.quota_df = 12; // Default for 'Player'
+    matchForm.value.quota_mf = 0;
+    matchForm.value.quota_fw = 0;
     matchForm.value.quota = 14;
   }
 });
@@ -232,21 +232,25 @@ const updateStatus = async (id, status) => {
             <label class="block text-[10px] font-bold uppercase text-primary mb-3">Detail Kuota Per Posisi</label>
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
               <div>
-                <label class="block text-[8px] font-bold text-on-surface-variant mb-1">GK</label>
+                <label class="block text-[8px] font-bold text-on-surface-variant mb-1">GK (Kiper)</label>
                 <input v-model.number="matchForm.quota_gk" type="number" class="w-full bg-background border border-outline-variant rounded-lg px-2 py-1.5 text-xs focus:outline-none" />
               </div>
-              <div>
-                <label class="block text-[8px] font-bold text-on-surface-variant mb-1">DF</label>
+              <div :class="matchForm.title === 'Big Pitch' ? 'col-span-1' : 'col-span-1'">
+                <label class="block text-[8px] font-bold text-on-surface-variant mb-1">
+                  {{ matchForm.title === 'Big Pitch' ? 'DF (Bek)' : 'Player (Pemain)' }}
+                </label>
                 <input v-model.number="matchForm.quota_df" type="number" class="w-full bg-background border border-outline-variant rounded-lg px-2 py-1.5 text-xs focus:outline-none" />
               </div>
-              <div>
-                <label class="block text-[8px] font-bold text-on-surface-variant mb-1">MF</label>
-                <input v-model.number="matchForm.quota_mf" type="number" class="w-full bg-background border border-outline-variant rounded-lg px-2 py-1.5 text-xs focus:outline-none" />
-              </div>
-              <div>
-                <label class="block text-[8px] font-bold text-on-surface-variant mb-1">FW</label>
-                <input v-model.number="matchForm.quota_fw" type="number" class="w-full bg-background border border-outline-variant rounded-lg px-2 py-1.5 text-xs focus:outline-none" />
-              </div>
+              <template v-if="matchForm.title === 'Big Pitch'">
+                <div>
+                  <label class="block text-[8px] font-bold text-on-surface-variant mb-1">MF (Tengah)</label>
+                  <input v-model.number="matchForm.quota_mf" type="number" class="w-full bg-background border border-outline-variant rounded-lg px-2 py-1.5 text-xs focus:outline-none" />
+                </div>
+                <div>
+                  <label class="block text-[8px] font-bold text-on-surface-variant mb-1">FW (Depan)</label>
+                  <input v-model.number="matchForm.quota_fw" type="number" class="w-full bg-background border border-outline-variant rounded-lg px-2 py-1.5 text-xs focus:outline-none" />
+                </div>
+              </template>
             </div>
           </div>
           

@@ -280,12 +280,15 @@ const formatTime = (dateString) => {
 
             <div v-else class="px-6 max-w-7xl mx-auto">
               <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div v-for="pos in [
+                <div v-for="pos in (activeSquadMatch.title === 'Big Pitch' ? [
                   {key: 'GK', label: 'Goalkeeper', quota: activeSquadMatch.quota_gk, icon: 'sports_handball'},
                   {key: 'DF', label: 'Defender', quota: activeSquadMatch.quota_df, icon: 'shield'},
                   {key: 'MF', label: 'Midfielder', quota: activeSquadMatch.quota_mf, icon: 'settings_input_component'},
                   {key: 'FW', label: 'Forward', quota: activeSquadMatch.quota_fw, icon: 'bolt'}
-                ]" :key="pos.key" class="bento-card p-6 flex flex-col h-[400px] bg-surface-container/20 backdrop-blur-sm border border-white/5">
+                ] : [
+                  {key: 'GK', label: 'Kiper', quota: activeSquadMatch.quota_gk, icon: 'sports_handball'},
+                  {key: 'DF', label: 'Player', quota: activeSquadMatch.quota_df, icon: 'group'}
+                ])" :key="pos.key" class="bento-card p-6 flex flex-col h-[400px] bg-surface-container/20 backdrop-blur-sm border border-white/5">
                   <div class="flex justify-between items-start mb-6">
                     <div class="flex items-center gap-2 text-primary">
                       <span class="material-symbols-outlined text-lg">{{ pos.icon }}</span>
@@ -369,13 +372,16 @@ const formatTime = (dateString) => {
 
           <div>
             <label class="block text-xs font-black uppercase text-on-surface-variant mb-3 tracking-widest">Posisi Lapangan</label>
-            <div class="grid grid-cols-4 gap-3">
-              <button v-for="pos in [
-                {key: 'GK', quota: upcomingMatches.find(m => m.id === registrationForm.match_id)?.quota_gk || 2},
-                {key: 'DF', quota: upcomingMatches.find(m => m.id === registrationForm.match_id)?.quota_df || 4},
-                {key: 'MF', quota: upcomingMatches.find(m => m.id === registrationForm.match_id)?.quota_mf || 4},
-                {key: 'FW', quota: upcomingMatches.find(m => m.id === registrationForm.match_id)?.quota_fw || 4}
-              ]" :key="pos.key" type="button" 
+            <div class="grid gap-3" :class="upcomingMatches.find(m => m.id === registrationForm.match_id)?.title === 'Big Pitch' ? 'grid-cols-4' : 'grid-cols-2'">
+              <button v-for="pos in (upcomingMatches.find(m => m.id === registrationForm.match_id)?.title === 'Big Pitch' ? [
+                {key: 'GK', label: 'GK', quota: upcomingMatches.find(m => m.id === registrationForm.match_id)?.quota_gk || 2},
+                {key: 'DF', label: 'DF', quota: upcomingMatches.find(m => m.id === registrationForm.match_id)?.quota_df || 4},
+                {key: 'MF', label: 'MF', quota: upcomingMatches.find(m => m.id === registrationForm.match_id)?.quota_mf || 4},
+                {key: 'FW', label: 'FW', quota: upcomingMatches.find(m => m.id === registrationForm.match_id)?.quota_fw || 4}
+              ] : [
+                {key: 'GK', label: 'Kiper', quota: upcomingMatches.find(m => m.id === registrationForm.match_id)?.quota_gk || 2},
+                {key: 'DF', label: 'Player', quota: upcomingMatches.find(m => m.id === registrationForm.match_id)?.quota_df || 4}
+              ])" :key="pos.key" type="button" 
                 @click="squadList.filter(p => p.position === pos.key).length < pos.quota ? registrationForm.position = pos.key : null"
                 :disabled="squadList.filter(p => p.position === pos.key).length >= pos.quota"
                 class="py-4 rounded-2xl font-black border transition-all relative"
@@ -385,7 +391,7 @@ const formatTime = (dateString) => {
                 ]"
               >
                 <span v-if="squadList.filter(p => p.position === pos.key).length >= pos.quota" class="absolute -top-2 left-1/2 -translate-x-1/2 bg-secondary text-white text-[7px] px-1.5 py-0.5 rounded-full font-black">FULL</span>
-                {{ pos.key }}
+                {{ pos.label }}
               </button>
             </div>
             <p v-if="registrationForm.position" class="mt-3 text-[10px] text-on-surface-variant italic uppercase tracking-wider">
