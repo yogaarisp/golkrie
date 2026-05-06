@@ -21,6 +21,7 @@ class GolkrieMatch extends Model
         'quota_mf',
         'quota_fw',
         'price',
+        'price_gk',
         'media_url',
         'status',
     ];

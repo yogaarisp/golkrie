@@ -11,7 +11,8 @@ const settings = ref({
   whatsapp_contact: '',
   hero_description: '',
   app_logo: '',
-  app_favicon: ''
+  app_favicon: '',
+  bank_account: ''
 });
 
 const loading = ref(true);
@@ -25,6 +26,7 @@ const handleFileUpload = async (event, type) => {
 
   const formData = new FormData();
   formData.append('file', file);
+  formData.append('bucket', 'logos');
   
   if (type === 'logo') logoLoading.value = true;
   else faviconLoading.value = true;
@@ -165,6 +167,10 @@ const saveSettings = async () => {
             <div>
               <label class="block text-xs font-bold uppercase text-on-surface-variant mb-2">WhatsApp Contact</label>
               <input v-model="settings.whatsapp_contact" type="text" class="w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 focus:outline-none focus:border-primary transition-all" />
+            </div>
+            <div class="md:col-span-2">
+              <label class="block text-xs font-bold uppercase text-on-surface-variant mb-2">Nomor Rekening / Metode Pembayaran</label>
+              <input v-model="settings.bank_account" type="text" placeholder="BCA 123456789 a/n Golkrie" class="w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 focus:outline-none focus:border-primary transition-all font-mono" />
             </div>
           </div>
         </div>

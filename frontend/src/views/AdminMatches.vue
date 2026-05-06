@@ -22,6 +22,7 @@ const matchForm = ref({
   quota_mf: 4,
   quota_fw: 4,
   price: '0',
+  price_gk: '0',
   status: 'upcoming'
 });
 
@@ -85,7 +86,8 @@ const openCreateModal = () => {
     quota_df: 4,
     quota_mf: 4,
     quota_fw: 4,
-    price: '0' 
+    price: '0',
+    price_gk: '0'
   };
   isModalOpen.value = true;
 };
@@ -104,7 +106,8 @@ const openEditModal = (match) => {
     quota_df: match.quota_df || 4,
     quota_mf: match.quota_mf || 4,
     quota_fw: match.quota_fw || 4,
-    price: match.price 
+    price: match.price,
+    price_gk: match.price_gk || '0'
   };
   isModalOpen.value = true;
 };
@@ -274,9 +277,15 @@ const updateStatus = async (id, status) => {
             </div>
           </div>
 
-          <div>
-            <label class="block text-[10px] font-bold uppercase text-on-surface-variant mb-1">Harga</label>
-            <input v-model="matchForm.price" type="text" class="w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-2 focus:outline-none" />
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-[10px] font-bold uppercase text-on-surface-variant mb-1">Harga (GK)</label>
+              <input v-model="matchForm.price_gk" type="text" class="w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-2 focus:outline-none" />
+            </div>
+            <div>
+              <label class="block text-[10px] font-bold uppercase text-on-surface-variant mb-1">Harga (Pemain Lain)</label>
+              <input v-model="matchForm.price" type="text" class="w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-2 focus:outline-none" />
+            </div>
           </div>
 
           <div class="pt-4">

@@ -59,6 +59,7 @@ class AdminController extends Controller
             'quota_mf' => 'required|integer',
             'quota_fw' => 'required|integer',
             'price' => 'required|string',
+            'price_gk' => 'required|string',
         ]);
 
         $match = GolkrieMatch::create($validated);
@@ -80,6 +81,7 @@ class AdminController extends Controller
             'quota_mf' => 'integer',
             'quota_fw' => 'integer',
             'price' => 'string',
+            'price_gk' => 'string',
             'status' => 'string|in:upcoming,finished'
         ]);
 

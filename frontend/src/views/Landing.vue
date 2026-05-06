@@ -166,9 +166,9 @@ const formatTime = (dateString) => {
             <p class="text-lg md:text-xl text-white/80 mb-10 max-w-2xl mx-auto leading-relaxed font-medium px-4">
               {{ settings.hero_description || 'Tingkatkan skill dan jalin persaudaraan di lapangan hijau dua kali seminggu.' }}
             </p>
-            <div class="flex flex-wrap justify-center gap-6">
-              <a href="#schedule" class="bg-primary text-white px-10 py-5 rounded-2xl font-bold text-xl hover:scale-105 active:scale-95 transition-all shadow-2xl shadow-primary/30 flex items-center gap-3">
-                <span class="material-symbols-outlined">calendar_today</span>
+            <div class="flex flex-wrap justify-center gap-4">
+              <a href="#schedule" class="bg-primary text-white px-8 py-3.5 rounded-xl font-bold text-base hover:scale-105 active:scale-95 transition-all shadow-xl shadow-primary/20 flex items-center gap-2">
+                <span class="material-symbols-outlined text-xl">calendar_today</span>
                 Lihat Jadwal
               </a>
             </div>
@@ -234,6 +234,18 @@ const formatTime = (dateString) => {
                     <span class="material-symbols-outlined text-primary text-sm">location_on</span>
                   </div>
                   <span class="text-xs font-bold text-white truncate">{{ match.location }}</span>
+                </div>
+                <div class="flex items-center gap-3 text-on-surface-variant">
+                  <div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
+                    <span class="material-symbols-outlined text-primary text-sm">payments</span>
+                  </div>
+                  <div class="flex flex-col">
+                    <span class="text-xs font-bold text-white">Rp {{ match.price_gk }} <span class="text-[9px] font-normal opacity-70">(GK)</span></span>
+                    <span class="text-xs font-bold text-white">Rp {{ match.price }} <span class="text-[9px] font-normal opacity-70">(Player Lain)</span></span>
+                    <span v-if="settings.bank_account" class="text-[9px] font-bold text-primary mt-1 px-2 py-0.5 bg-primary/10 rounded-md border border-primary/20 w-fit">
+                      Transfer: {{ settings.bank_account }}
+                    </span>
+                  </div>
                 </div>
               </div>
               

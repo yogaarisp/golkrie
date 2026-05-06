@@ -8,18 +8,21 @@ const props = defineProps({
   }
 });
 
-// Sync favicon
-watch(() => props.settings?.app_favicon, (newFavicon) => {
-  if (newFavicon) {
+// Sync favicon and Title
+watch(() => props.settings, (s) => {
+  if (s?.app_favicon) {
     let link = document.querySelector("link[rel~='icon']");
     if (!link) {
       link = document.createElement('link');
       link.rel = 'icon';
       document.head.appendChild(link);
     }
-    link.href = newFavicon;
+    link.href = s.app_favicon;
   }
-}, { immediate: true });
+  if (s?.app_name) {
+    document.title = `${s.app_name} — ${s.app_tagline || 'Golek Kringet'}`;
+  }
+}, { immediate: true, deep: true });
 
 const isMenuOpen = ref(false);
 </script>
@@ -28,28 +31,29 @@ const isMenuOpen = ref(false);
   <div class="min-h-screen bg-background text-on-surface">
     <!-- TopNavBar -->
     <header class="fixed top-0 w-full z-50 bg-surface-container/80 backdrop-blur-md border-b border-outline-variant/30">
-      <nav class="flex justify-between items-center h-20 px-6 max-w-7xl mx-auto">
-        <router-link to="/" class="flex items-center gap-3">
-          <img v-if="props.settings?.app_logo" :src="props.settings.app_logo" class="h-10 w-auto object-contain" :alt="props.settings.app_name" />
-          <span v-else class="text-2xl font-black text-primary tracking-tighter uppercase font-lexend">
+      <nav class="flex justify-between items-center h-14 px-6 max-w-7xl mx-auto">
+        <router-link to="/" class="flex items-center gap-2 md:gap-3">
+          <img v-if="props.settings?.app_logo" :src="props.settings.app_logo" class="h-9 md:h-10 w-auto object-contain" :alt="props.settings.app_name" />
+          <span class="text-xl md:text-2xl font-black text-primary tracking-tighter uppercase font-lexend">
             {{ props.settings?.app_name || 'Golkrie' }}
           </span>
         </router-link>
-        
-          <a href="#home" class="text-on-surface/70 hover:text-white transition-colors font-bold uppercase tracking-wider text-sm">Home</a>
-          <a href="#schedule" class="text-on-surface/70 hover:text-white transition-colors font-bold uppercase tracking-wider text-sm">Schedule</a>
-          <a href="#sponsors" class="text-on-surface/70 hover:text-white transition-colors font-bold uppercase tracking-wider text-sm">Sponsors</a>
-          <router-link to="/admin" class="text-on-surface/70 hover:text-white transition-colors font-bold uppercase tracking-wider text-sm">Admin</router-link>
+        <div class="hidden md:flex items-center gap-8">
+          <a href="#home" class="text-on-surface/70 hover:text-white transition-colors font-bold uppercase tracking-wider text-xs">Home</a>
+          <a href="#schedule" class="text-on-surface/70 hover:text-white transition-colors font-bold uppercase tracking-wider text-xs">Schedule</a>
+          <a href="#sponsors" class="text-on-surface/70 hover:text-white transition-colors font-bold uppercase tracking-wider text-xs">Sponsors</a>
+          <router-link to="/admin" class="text-on-surface/70 hover:text-white transition-colors font-bold uppercase tracking-wider text-xs">Admin</router-link>
+        </div>
 
         <div class="flex items-center gap-4">
-          <button class="hidden md:block bg-primary-container text-on-primary-container px-6 py-2 rounded-full font-bold text-sm hover:scale-105 transition-all active:scale-95">
+          <button class="hidden md:block bg-primary-container text-on-primary-container px-6 py-2 rounded-full font-bold text-sm hover:scale-105 transition-all active:scale-95 shadow-lg shadow-primary/10 border border-primary/20">
             Join Next Match
           </button>
         </div>
       </nav>
     </header>
 
-    <main class="pt-20 pb-24 md:pb-0">
+    <main class="pt-14 pb-24 md:pb-0">
       <slot />
     </main>
 
@@ -94,7 +98,10 @@ const isMenuOpen = ref(false);
     <!-- Footer -->
     <footer class="bg-surface-container-low w-full py-12 border-t border-outline-variant/30">
       <div class="flex flex-col md:flex-row justify-between items-center px-6 max-w-7xl mx-auto gap-8">
-        <div class="text-xl font-bold text-on-surface">{{ props.settings?.app_name || 'Golkrie' }}</div>
+        <div class="flex items-center gap-3">
+          <img v-if="props.settings?.app_logo" :src="props.settings.app_logo" class="h-8 w-auto object-contain opacity-70 hover:opacity-100 transition-opacity" :alt="props.settings.app_name" />
+          <div class="text-xl font-bold text-on-surface">{{ props.settings?.app_name || 'Golkrie' }}</div>
+        </div>
         <div class="text-sm text-on-surface-variant text-center md:text-left">
           {{ props.settings?.footer_text || '© 2024 Golkrie Community. Golek Kringet, Jalin Seduluran.' }}
         </div>
