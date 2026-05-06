@@ -149,12 +149,12 @@ const updateStatus = async (id, status) => {
 
 <template>
   <AdminLayout>
-    <div class="flex justify-between items-center mb-10">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-10">
       <div>
         <h1 class="text-3xl font-bold text-white mb-2">Manage Matches</h1>
-        <p class="text-on-surface-variant">Buat dan atur jadwal pertandingan Golkrie.</p>
+        <p class="text-on-surface-variant text-sm">Buat dan atur jadwal pertandingan Golkrie.</p>
       </div>
-      <button @click="openCreateModal" class="bg-primary-container text-on-primary-container px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:scale-105 active:scale-95 transition-all">
+      <button @click="openCreateModal" class="w-full md:w-auto bg-primary-container text-on-primary-container px-6 py-3 rounded-xl font-bold flex items-center justify-center gap-2 hover:scale-105 active:scale-95 transition-all">
         <span class="material-symbols-outlined">add</span>
         Tambah Match
       </button>
@@ -230,7 +230,7 @@ const updateStatus = async (id, status) => {
           <!-- Position Quotas -->
           <div class="bg-surface-container/30 p-4 rounded-xl border border-outline-variant/30">
             <label class="block text-[10px] font-bold uppercase text-primary mb-3">Detail Kuota Per Posisi</label>
-            <div class="grid grid-cols-4 gap-2">
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
               <div>
                 <label class="block text-[8px] font-bold text-on-surface-variant mb-1">GK</label>
                 <input v-model.number="matchForm.quota_gk" type="number" class="w-full bg-background border border-outline-variant rounded-lg px-2 py-1.5 text-xs focus:outline-none" />
@@ -255,7 +255,7 @@ const updateStatus = async (id, status) => {
             <input v-model="matchForm.match_name" type="text" class="w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-2 focus:outline-none" />
           </div>
           
-          <div class="grid grid-cols-2 gap-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label class="block text-xs font-bold text-on-surface-variant mb-2 uppercase">Waktu Mulai</label>
               <input v-model="matchForm.date_time" type="datetime-local" class="w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 focus:outline-none focus:border-primary transition-all" required />
@@ -277,7 +277,7 @@ const updateStatus = async (id, status) => {
             </div>
           </div>
 
-          <div class="grid grid-cols-2 gap-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label class="block text-[10px] font-bold uppercase text-on-surface-variant mb-1">Harga (GK)</label>
               <input v-model="matchForm.price_gk" type="text" class="w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-2 focus:outline-none" />

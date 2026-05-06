@@ -80,12 +80,12 @@ const deleteSponsor = async (id) => {
 
 <template>
   <AdminLayout>
-    <div class="flex justify-between items-center mb-8">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
       <div>
         <h1 class="text-3xl font-bold text-white mb-2">Sponsorships</h1>
-        <p class="text-on-surface-variant">Kelola partner dan sponsor yang tampil di halaman depan.</p>
+        <p class="text-on-surface-variant text-sm">Kelola partner dan sponsor yang tampil di halaman depan.</p>
       </div>
-      <button @click="openModal()" class="bg-secondary text-on-secondary px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:scale-105 transition-all">
+      <button @click="openModal()" class="w-full md:w-auto bg-secondary text-on-secondary px-6 py-3 rounded-xl font-bold flex items-center justify-center gap-2 hover:scale-105 transition-all">
         <span class="material-symbols-outlined">add_business</span>
         Tambah Sponsor
       </button>
@@ -151,9 +151,9 @@ const deleteSponsor = async (id) => {
             <label class="block text-xs font-bold text-on-surface-variant mb-2 uppercase">Website / Social Link</label>
             <input v-model="sponsorForm.link_url" type="url" class="w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 focus:outline-none focus:border-primary transition-all" placeholder="https://..." />
           </div>
-          <div class="flex gap-4 pt-4">
-            <button type="button" @click="isModalOpen = false" class="flex-1 px-6 py-3 rounded-xl font-bold text-on-surface-variant hover:bg-white/5 transition-all">Batal</button>
-            <button type="submit" class="flex-1 bg-secondary text-on-secondary px-6 py-3 rounded-xl font-bold hover:opacity-90 transition-all">Simpan</button>
+          <div class="flex flex-col sm:flex-row gap-4 pt-4">
+            <button type="button" @click="isModalOpen = false" class="order-2 sm:order-1 flex-1 px-6 py-3 rounded-xl font-bold text-on-surface-variant hover:bg-white/5 transition-all">Batal</button>
+            <button type="submit" class="order-1 sm:order-2 flex-1 bg-secondary text-on-secondary px-6 py-3 rounded-xl font-bold hover:opacity-90 transition-all shadow-lg shadow-secondary/20">Simpan</button>
           </div>
         </form>
       </div>

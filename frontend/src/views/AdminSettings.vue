@@ -175,8 +175,8 @@ const saveSettings = async () => {
           </div>
         </div>
 
-        <div class="flex justify-end">
-          <button type="submit" :disabled="saving" class="bg-primary-container text-on-primary-container px-10 py-4 rounded-2xl font-bold flex items-center gap-3 hover:scale-105 active:scale-95 transition-all disabled:opacity-50 shadow-xl shadow-primary/20">
+        <div class="flex justify-end pt-6">
+          <button type="submit" :disabled="saving" class="w-full md:w-auto bg-primary-container text-on-primary-container px-10 py-4 rounded-2xl font-bold flex items-center justify-center gap-3 hover:scale-105 active:scale-95 transition-all disabled:opacity-50 shadow-xl shadow-primary/20">
             <span v-if="saving" class="spinner"></span>
             <span v-else class="material-symbols-outlined">save</span>
             {{ saving ? 'Menyimpan...' : 'Simpan Perubahan' }}

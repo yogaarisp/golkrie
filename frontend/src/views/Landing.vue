@@ -406,6 +406,69 @@ const formatTime = (dateString) => {
         </form>
       </div>
     </div>
+    <!-- About Section -->
+    <section id="about" class="py-24 px-6 bg-surface-container-low border-t border-outline-variant/30">
+      <div class="max-w-7xl mx-auto">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+          <div>
+            <div class="flex items-center gap-4 mb-6">
+              <div class="h-1 w-12 bg-primary rounded-full"></div>
+              <span class="text-primary font-bold uppercase tracking-[0.2em] text-xs">About Golkrie</span>
+            </div>
+            <h2 class="text-4xl md:text-5xl font-black text-white mb-8 leading-tight tracking-tighter">
+              Golek Kringet, <br />
+              <span class="text-primary">Jalin Seduluran.</span>
+            </h2>
+            <p class="text-on-surface-variant text-lg leading-relaxed mb-8">
+              {{ settings.hero_description || 'Golkrie adalah komunitas sepakbola yang berfokus pada kesehatan dan tali persaudaraan. Kami percaya bahwa olahraga adalah cara terbaik untuk menjaga tubuh tetap bugar sekaligus menambah relasi baru.' }}
+            </p>
+            
+            <div class="flex flex-wrap gap-4">
+              <a v-if="settings.instagram_url" :href="settings.instagram_url" target="_blank" class="flex items-center gap-3 bg-surface-container px-6 py-4 rounded-2xl border border-outline-variant/40 hover:border-primary/50 transition-all group">
+                <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+                  <span class="material-symbols-outlined">photo_camera</span>
+                </div>
+                <div>
+                  <div class="text-[10px] uppercase font-bold text-on-surface-variant">Instagram</div>
+                  <div class="text-white font-bold">Follow Us</div>
+                </div>
+              </a>
+
+              <a v-if="settings.whatsapp_contact" :href="'https://wa.me/' + settings.whatsapp_contact.replace(/[^0-9]/g, '')" target="_blank" class="flex items-center gap-3 bg-surface-container px-6 py-4 rounded-2xl border border-outline-variant/40 hover:border-green-500/50 transition-all group">
+                <div class="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center text-green-500 group-hover:scale-110 transition-transform">
+                  <span class="material-symbols-outlined">chat</span>
+                </div>
+                <div>
+                  <div class="text-[10px] uppercase font-bold text-on-surface-variant">WhatsApp</div>
+                  <div class="text-white font-bold">Chat Admin</div>
+                </div>
+              </a>
+            </div>
+          </div>
+
+          <div class="relative">
+            <div class="absolute -inset-4 bg-primary/20 blur-3xl rounded-full"></div>
+            <div class="relative glass-card p-10 overflow-hidden group">
+              <div class="flex items-center gap-6 mb-8">
+                <div class="w-20 h-20 bg-primary rounded-3xl flex items-center justify-center text-white text-4xl font-black">G</div>
+                <div>
+                  <h3 class="text-2xl font-black text-white uppercase tracking-tighter">{{ settings.app_name || 'GOLKRIE' }}</h3>
+                  <p class="text-primary font-bold text-sm uppercase tracking-widest">{{ settings.app_tagline || 'Community' }}</p>
+                </div>
+              </div>
+              <p class="text-on-surface-variant italic leading-relaxed mb-6">
+                "Bukan sekadar mengejar bola, tapi mengejar keringat dan mempererat tali silaturahmi antar pecinta sepakbola di Semarang."
+              </p>
+              <div class="h-[1px] w-full bg-outline-variant/30 mb-6"></div>
+              <div class="flex items-center justify-between text-xs font-bold text-on-surface-variant">
+                <span>EST 2024</span>
+                <span class="text-primary">#GolekKringet</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
   </PublicLayout>
 </template>
 

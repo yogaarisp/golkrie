@@ -42,7 +42,7 @@ const isMenuOpen = ref(false);
           <a href="#home" class="text-on-surface/70 hover:text-white transition-colors font-bold uppercase tracking-wider text-xs">Home</a>
           <a href="#schedule" class="text-on-surface/70 hover:text-white transition-colors font-bold uppercase tracking-wider text-xs">Schedule</a>
           <a href="#sponsors" class="text-on-surface/70 hover:text-white transition-colors font-bold uppercase tracking-wider text-xs">Sponsors</a>
-          <router-link to="/admin" class="text-on-surface/70 hover:text-white transition-colors font-bold uppercase tracking-wider text-xs">Admin</router-link>
+          <a href="#about" class="text-on-surface/70 hover:text-white transition-colors font-bold uppercase tracking-wider text-xs">About Us</a>
         </div>
 
         <div class="flex items-center gap-4">
@@ -87,11 +87,11 @@ const isMenuOpen = ref(false);
                 <span class="text-[10px] font-bold uppercase tracking-widest">Sponsors</span>
             </a>
 
-            <!-- Admin -->
-            <router-link to="/admin" class="flex flex-col items-center gap-1 text-on-surface-variant">
-                <span class="material-symbols-outlined text-2xl">admin_panel_settings</span>
-                <span class="text-[10px] font-bold uppercase tracking-widest">Admin</span>
-            </router-link>
+            <!-- About -->
+            <a href="#about" class="flex flex-col items-center gap-1 text-on-surface-variant">
+                <span class="material-symbols-outlined text-2xl">info</span>
+                <span class="text-[10px] font-bold uppercase tracking-widest">About</span>
+            </a>
         </div>
     </nav>
 
@@ -104,6 +104,7 @@ const isMenuOpen = ref(false);
         </div>
         <div class="text-sm text-on-surface-variant text-center md:text-left">
           {{ props.settings?.footer_text || '© 2024 Golkrie Community. Golek Kringet, Jalin Seduluran.' }}
+          <router-link to="/admin" class="ml-4 opacity-30 hover:opacity-100 transition-opacity"><span class="material-symbols-outlined text-xs align-middle">lock</span></router-link>
         </div>
         <div class="flex gap-6">
           <a href="#" class="text-on-surface-variant hover:text-primary transition-colors text-sm">Privacy</a>
