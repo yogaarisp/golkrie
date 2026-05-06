@@ -214,37 +214,54 @@ const formatTime = (dateString) => {
 
               <h3 class="text-xl font-black mb-5 text-white uppercase italic tracking-tighter">{{ match.match_name }}</h3>
               
-              <div class="space-y-3 mb-6 bg-white/5 p-4 rounded-xl border border-white/5">
-                <div class="flex items-center gap-3 text-on-surface-variant">
-                  <div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
-                    <span class="material-symbols-outlined text-primary text-sm">calendar_month</span>
+              <div class="space-y-4 mb-8 bg-surface-container/30 p-5 rounded-2xl border border-white/5">
+                <div class="flex items-center gap-4">
+                  <div class="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 border border-primary/20">
+                    <span class="material-symbols-outlined text-primary text-lg">calendar_month</span>
                   </div>
-                  <span class="text-xs font-bold text-white">{{ formatDate(match.date_time) }}</span>
+                  <span class="text-sm font-black text-white tracking-tight">{{ formatDate(match.date_time) }}</span>
                 </div>
-                <div class="flex items-center gap-3 text-on-surface-variant">
-                  <div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
-                    <span class="material-symbols-outlined text-primary text-sm">schedule</span>
+                <div class="flex items-center gap-4">
+                  <div class="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 border border-primary/20">
+                    <span class="material-symbols-outlined text-primary text-lg">schedule</span>
                   </div>
-                  <span class="text-xs font-bold text-white">
+                  <span class="text-sm font-black text-white tracking-tight">
                     {{ formatTime(match.date_time) }} 
-                    <span v-if="match.end_time"> - {{ formatTime(match.end_time) }}</span>
+                    <span v-if="match.end_time" class="opacity-40 mx-1">/</span>
+                    <span v-if="match.end_time">{{ formatTime(match.end_time) }}</span>
                   </span>
                 </div>
-                <div class="flex items-center gap-3 text-on-surface-variant">
-                  <div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
-                    <span class="material-symbols-outlined text-primary text-sm">location_on</span>
+                <div class="flex items-center gap-4">
+                  <div class="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 border border-primary/20">
+                    <span class="material-symbols-outlined text-primary text-lg">location_on</span>
                   </div>
-                  <span class="text-xs font-bold text-white truncate">{{ match.location }}</span>
+                  <span class="text-sm font-black text-white tracking-tight truncate">{{ match.location }}</span>
                 </div>
-                <div class="flex items-center gap-3 text-on-surface-variant">
-                  <div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
-                    <span class="material-symbols-outlined text-primary text-sm">payments</span>
+                
+                <div class="h-[1px] w-full bg-white/5 my-2"></div>
+
+                <div class="flex items-start gap-4">
+                  <div class="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 border border-primary/20">
+                    <span class="material-symbols-outlined text-primary text-lg">payments</span>
                   </div>
-                  <div class="flex flex-col">
-                    <span class="text-xs font-bold text-white">Rp {{ match.price_gk }} <span class="text-[9px] font-normal opacity-70">(GK)</span></span>
-                    <span class="text-xs font-bold text-white">Rp {{ match.price }} <span class="text-[9px] font-normal opacity-70">(Player Lain)</span></span>
-                    <div v-if="settings.bank_account" class="text-[9px] font-bold text-primary mt-1 px-2 py-1 bg-primary/10 rounded-md border border-primary/20 w-fit whitespace-pre-line">
-                      {{ settings.bank_account }}
+                  <div class="flex-1 pt-0.5">
+                    <div class="flex justify-between items-center mb-1.5">
+                      <span class="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/60">Kiper (GK)</span>
+                      <span class="text-sm font-black text-white">Rp {{ match.price_gk }}</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                      <span class="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/60">Pemain (Player)</span>
+                      <span class="text-sm font-black text-white">Rp {{ match.price }}</span>
+                    </div>
+
+                    <div v-if="settings.bank_account" class="mt-4 p-3 bg-primary/5 rounded-xl border border-primary/10 relative overflow-hidden">
+                      <div class="absolute top-0 right-0 p-1">
+                        <span class="material-symbols-outlined text-primary/20 text-xs">account_balance</span>
+                      </div>
+                      <div class="text-[9px] font-black uppercase tracking-[0.2em] text-primary mb-1.5">Payment Details</div>
+                      <div class="text-[10px] font-bold text-white/90 whitespace-pre-line leading-relaxed">
+                        {{ settings.bank_account }}
+                      </div>
                     </div>
                   </div>
                 </div>
