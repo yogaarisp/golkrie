@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\MatchSession;
+use App\Models\GolkrieMatch;
 use App\Models\Registration;
 use Illuminate\Http\Request;
 
@@ -11,7 +11,7 @@ class TeamController extends Controller
 {
     public function index($matchId)
     {
-        $match = MatchSession::findOrFail($matchId);
+        $match = GolkrieMatch::findOrFail($matchId);
         $registrations = Registration::where('match_id', $matchId)
             ->where('is_accepted', true)
             ->get();
@@ -65,5 +65,21 @@ class TeamController extends Controller
         }
 
         return response()->json(['message' => 'Teams updated successfully']);
+    }
+
+    public function updateConfig(Request $request, $matchId)
+    {
+        $request->validate([
+            'team_config' => 'required|array'
+        ]);
+
+        $match = GolkrieMatch::findOrFail($matchId);
+        $match->team_config = $request->team_config;
+        $match->save();
+
+        return response()->json([
+            'message' => 'Team configuration updated successfully',
+            'match' => $match
+        ]);
     }
 }

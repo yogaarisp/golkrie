@@ -44,4 +44,5 @@ Route::middleware('auth:sanctum')->prefix('admin')->group(function () {
     Route::get('/matches/{match}/teams', [TeamController::class, 'index']);
     Route::post('/matches/{match}/shuffle', [TeamController::class, 'shuffle']);
     Route::post('/matches/{match}/teams', [TeamController::class, 'updateTeams']);
+    Route::post('/matches/{match}/teams/config', [TeamController::class, 'updateConfig']);
 });

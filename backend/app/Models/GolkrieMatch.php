@@ -24,6 +24,11 @@ class GolkrieMatch extends Model
         'price_gk',
         'media_url',
         'status',
+        'team_config',
+    ];
+
+    protected $casts = [
+        'team_config' => 'array',
     ];
 
     public function registrations()
