@@ -141,7 +141,7 @@ const submitRegistration = async () => {
 
 const formatDate = (dateString) => {
   if (!dateString) return 'TBA';
-  const options = { weekday: 'long', day: 'numeric', month: 'short' };
+  const options = { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' };
   try {
     return new Date(dateString).toLocaleDateString('id-ID', options);
   } catch (e) {
