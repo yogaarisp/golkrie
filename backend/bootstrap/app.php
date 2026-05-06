@@ -12,12 +12,7 @@ $app = Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        // Only use stateful API on local dev (session-based).
-        // On Vercel (serverless), we rely purely on Bearer token auth.
-        $isVercel = isset($_SERVER['VERCEL']) || getenv('VERCEL') || isset($_ENV['VERCEL']) || isset($_SERVER['VERCEL_URL']);
-        if (!$isVercel) {
-            $middleware->statefulApi();
-        }
+        $middleware->statefulApi();
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         // Always return JSON for API requests
@@ -51,6 +46,17 @@ if (isset($_SERVER['VERCEL']) || getenv('VERCEL') || isset($_ENV['VERCEL']) || i
             mkdir($dir, 0777, true);
         }
     }
+
+    // Use array session driver on Vercel (stateless serverless)
+    $_ENV['SESSION_DRIVER'] = 'array';
+    $_SERVER['SESSION_DRIVER'] = 'array';
+    putenv('SESSION_DRIVER=array');
+
+    // Add Vercel domain to Sanctum stateful domains
+    $vercelUrl = $_SERVER['VERCEL_URL'] ?? $_ENV['VERCEL_URL'] ?? 'golkrie.vercel.app';
+    $currentDomains = $_ENV['SANCTUM_STATEFUL_DOMAINS'] ?? '';
+    $_ENV['SANCTUM_STATEFUL_DOMAINS'] = $currentDomains . ',golkrie.vercel.app,' . $vercelUrl;
+    putenv('SANCTUM_STATEFUL_DOMAINS=' . $_ENV['SANCTUM_STATEFUL_DOMAINS']);
 }
 
 return $app;
