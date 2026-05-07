@@ -145,6 +145,108 @@ const updateStatus = async (id, status) => {
         alert('Gagal update status.');
     }
 };
+
+const shareToWA = async (match) => {
+  try {
+    const [regRes, settingsRes] = await Promise.all([
+      axios.get(`/api/admin/matches/${match.id}/teams`),
+      axios.get('/api/admin/settings')
+    ]);
+
+    const registrations = regRes.data.registrations;
+    const settings = settingsRes.data.settings;
+
+    const date = new Date(match.date_time);
+    const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+    const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+    
+    const formattedDate = `${days[date.getDay()]}, ${date.getDate()} ${months[date.getMonth()]}`;
+    const formattedTime = `${date.getHours().toString().padStart(2, '0')}.${date.getMinutes().toString().padStart(2, '0')}`;
+    
+    let endTime = '';
+    if (match.end_time) {
+      const end = new Date(match.end_time);
+      endTime = `-${end.getHours().toString().padStart(2, '0')}.${end.getMinutes().toString().padStart(2, '0')}`;
+    }
+
+    let message = `*${match.match_name}*\n\n`;
+    message += `🗓️: *${formattedDate}*\n`;
+    message += `🕒: *Kick off ${formattedTime}${endTime}*\n`;
+    message += `🏟️: *${match.location}*\n\n`;
+    
+    message += `*HTM*\n`;
+    message += `Player ${Math.floor(match.price/1000)}K\n`;
+    message += `Kiper ${Math.floor(match.price_gk/1000)}K\n\n`;
+    
+    message += `*PEMBAYARAN* ${settings.bank_account || ''}\n\n`;
+    
+    message += `Fasilitas\n`;
+    message += `1. 2 Fotografer + Drone (situasional)\n`;
+    message += `2. Videografer\n`;
+    message += `3. Per orang main -+ 3 x 25 menit kotor\n`;
+    message += `4. Wasit lengkap\n`;
+    message += `5. Ballboy\n`;
+    message += `6. Minum\n`;
+    message += `7. Jersey\n`;
+    message += `8. Laundry\n`;
+    message += `9. Kitman\n\n`;
+    
+    message += `*LIST:*\n`;
+    
+    const positions = match.title === 'Big Pitch' ? ['GK', 'CB', 'RLB', 'MF', 'RLWF', 'CF'] : ['GK', 'DF'];
+    const posLabels = { GK: 'GK', CB: 'CB', RLB: 'RLB', MF: 'MF', RLWF: 'RLWF', CF: 'CF', DF: 'Player' };
+    const quotas = { 
+      GK: match.quota_gk || 4, 
+      CB: 8, 
+      RLB: 8, 
+      MF: 12, 
+      RLWF: 8, 
+      CF: 4, 
+      DF: match.quota_df || 12 
+    };
+
+    let playerCount = 1;
+    let isFirstPlayerPos = true;
+
+    positions.forEach(pos => {
+      if (pos !== 'GK' && isFirstPlayerPos) {
+        message += `\nPlayer\n`;
+        isFirstPlayerPos = false;
+        playerCount = 1; // Reset for players group
+      }
+      
+      message += `${posLabels[pos]}\n`;
+      const posPlayers = registrations.filter(r => r.position === pos && r.is_accepted);
+      const quota = quotas[pos];
+      
+      for (let i = 0; i < quota; i++) {
+        const p = posPlayers[i];
+        const paidEmoji = p?.is_paid ? ' 💸' : '';
+        const count = pos === 'GK' ? i + 1 : playerCount;
+        message += `${count}. ${p ? p.player_name + paidEmoji : ''}\n`;
+        if (pos !== 'GK') playerCount++;
+      }
+    });
+
+    const waitingList = registrations.filter(r => !r.is_accepted);
+    if (waitingList.length > 0) {
+      message += `\n*Waiting List :*\n`;
+      waitingList.forEach((p, i) => {
+        message += `${i+1}. ${p.player_name}\n`;
+      });
+    }
+
+    message += `\n*Harap konfirmasi pembayaran, bila cancel dan tak ada pengganti, uang hangus*\n`;
+    message += `*wajib dicermati*\n\n`;
+    message += `*TERIMAKASIH 🙏*\n`;
+    if (match.location_url) message += `${match.location_url}`;
+
+    window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
+  } catch (e) {
+    console.error(e);
+    alert('Gagal generate pesan WA.');
+  }
+};
 </script>
 
 <template>
@@ -206,6 +308,9 @@ const updateStatus = async (id, status) => {
               <span class="material-symbols-outlined text-sm">groups</span>
               Teams
             </router-link>
+            <button @click="shareToWA(match)" class="bg-green-500/20 text-green-500 p-2 rounded-lg hover:bg-green-500/30 transition-all flex items-center justify-center" title="Share to WhatsApp">
+              <span class="material-symbols-outlined">share</span>
+            </button>
         </div>
       </div>
     </div>
