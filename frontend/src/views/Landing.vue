@@ -240,7 +240,7 @@ const formatTime = (dateString) => {
                 <span class="text-primary text-[8px] font-black uppercase tracking-[0.2em]">Viewing Squad</span>
               </div>
 
-              <div class="flex justify-between items-start mb-6" :class="{'mt-6': activeSquadMatch?.id === match.id}">
+              <div class="flex justify-between items-start mb-5" :class="{'mt-6': activeSquadMatch?.id === match.id}">
                 <span class="bg-primary/10 text-primary px-3 py-1 rounded-full text-[10px] font-black uppercase border border-primary/20 tracking-widest">{{ match.title }}</span>
                 <div class="text-right">
                   <span class="block text-on-surface-variant text-[9px] font-bold uppercase tracking-tighter">Status Slot</span>
@@ -250,14 +250,14 @@ const formatTime = (dateString) => {
                 </div>
               </div>
 
-              <div class="flex-1">
+              <div class="mb-5">
                 <a v-if="match.location_url" :href="match.location_url" target="_blank" class="block group/title">
-                  <h3 class="text-xl font-black text-white uppercase tracking-tighter mb-1 group-hover/title:text-primary transition-colors flex items-center gap-2">
+                  <h3 class="text-xl font-black text-white uppercase tracking-tighter group-hover/title:text-primary transition-colors flex items-center gap-2">
                     {{ match.match_name }}
                     <span class="material-symbols-outlined text-sm opacity-0 group-hover/title:opacity-100 transition-all -translate-x-2 group-hover/title:translate-x-0">near_me</span>
                   </h3>
                 </a>
-                <h3 v-else class="text-xl font-black text-white uppercase tracking-tighter mb-1">{{ match.match_name }}</h3>
+                <h3 v-else class="text-xl font-black text-white uppercase tracking-tighter">{{ match.match_name }}</h3>
               </div>
               
               <div class="space-y-4 mb-8 bg-surface-container/30 p-5 rounded-2xl border border-white/5">
