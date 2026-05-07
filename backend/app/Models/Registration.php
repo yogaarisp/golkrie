@@ -12,6 +12,8 @@ class Registration extends Model
         'player_name',
         'position',
         'is_accepted',
+        'is_paid',
+        'team_name',
     ];
 
     public function match()

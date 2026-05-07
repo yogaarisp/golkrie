@@ -401,7 +401,8 @@ const formatTime = (dateString) => {
                       class="flex justify-between items-center bg-white/5 border border-white/5 px-4 py-3 rounded-xl mb-2 hover:border-primary/30 transition-all group"
                     >
                       <span class="text-sm font-bold text-white group-hover:text-primary transition-colors">{{ player.player_name }}</span>
-                      <span class="text-[8px] font-black uppercase tracking-tighter text-primary/60 border border-primary/20 px-1.5 py-0.5 rounded">PAID</span>
+                      <span v-if="player.is_paid" class="text-[8px] font-black uppercase tracking-tighter text-green-400 border border-green-400/20 bg-green-400/10 px-1.5 py-0.5 rounded shadow-[0_0_10px_rgba(74,222,128,0.2)]">PAID</span>
+                      <span v-else class="text-[8px] font-black uppercase tracking-tighter text-on-surface-variant/40 border border-white/10 px-1.5 py-0.5 rounded">UNPAID</span>
                     </div>
 
                     <!-- Open Slots -->
