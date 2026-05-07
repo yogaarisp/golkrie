@@ -30,6 +30,7 @@ class GolkrieMatch extends Model
 
     protected $casts = [
         'team_config' => 'array',
+        'facilities' => 'array',
     ];
 
     public function registrations()

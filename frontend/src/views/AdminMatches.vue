@@ -24,7 +24,17 @@ const matchForm = ref({
   price: '0',
   price_gk: '0',
   status: 'upcoming',
-  facilities: `1. 2 Fotografer + Drone (situasional)\n2. Videografer\n3. Per orang main -+ 3 x 25 menit kotor\n4. Wasit lengkap\n5. Ballboy\n6. Minum\n7. Jersey\n8. Laundry\n9. Kitman`
+  facilities: [
+    '2 Fotografer + Drone (situasional)',
+    'Videografer',
+    '-+ 3 x 25 menit kotor per orang',
+    'Wasit lengkap',
+    'Ballboy',
+    'Minum',
+    'Jersey',
+    'Laundry',
+    'Kitman'
+  ]
 });
 
 // Auto-fill quotas based on match type
@@ -89,7 +99,17 @@ const openCreateModal = () => {
     quota_fw: 4,
     price: '0',
     price_gk: '0',
-    facilities: `1. 2 Fotografer + Drone (situasional)\n2. Videografer\n3. Per orang main -+ 3 x 25 menit kotor\n4. Wasit lengkap\n5. Ballboy\n6. Minum\n7. Jersey\n8. Laundry\n9. Kitman`
+    facilities: [
+      '2 Fotografer + Drone (situasional)',
+      'Videografer',
+      '-+ 3 x 25 menit kotor per orang',
+      'Wasit lengkap',
+      'Ballboy',
+      'Minum',
+      'Jersey',
+      'Laundry',
+      'Kitman'
+    ]
   };
   isModalOpen.value = true;
 };
@@ -110,7 +130,7 @@ const openEditModal = (match) => {
     quota_fw: match.quota_fw || 4,
     price: match.price,
     price_gk: match.price_gk || '0',
-    facilities: match.facilities || ''
+    facilities: match.facilities && Array.isArray(match.facilities) ? [...match.facilities] : []
   };
   isModalOpen.value = true;
 };
@@ -149,6 +169,14 @@ const updateStatus = async (id, status) => {
     }
 };
 
+const addFacility = () => {
+  matchForm.value.facilities.push('');
+};
+
+const removeFacility = (index) => {
+  matchForm.value.facilities.splice(index, 1);
+};
+
 const shareToWA = async (match) => {
   try {
     const [regRes, settingsRes] = await Promise.all([
@@ -184,7 +212,12 @@ const shareToWA = async (match) => {
     message += `*PEMBAYARAN* ${settings.bank_account || ''}\n\n`;
     
     message += `Fasilitas\n`;
-    message += `${match.facilities || ''}\n\n`;
+    if (match.facilities && Array.isArray(match.facilities)) {
+      match.facilities.forEach((f, i) => {
+        if (f.trim()) message += `${i + 1}. ${f.trim()}\n`;
+      });
+    }
+    message += `\n`;
     
     message += `*LIST:*\n`;
     
@@ -396,9 +429,18 @@ const shareToWA = async (match) => {
             </div>
           </div>
 
-          <div>
-            <label class="block text-[10px] font-bold uppercase text-on-surface-variant mb-1">Fasilitas (Pisahkan per baris)</label>
-            <textarea v-model="matchForm.facilities" rows="6" class="w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 focus:outline-none focus:border-primary transition-all font-mono text-xs"></textarea>
+          <div class="space-y-3">
+            <label class="block text-[10px] font-bold uppercase text-on-surface-variant mb-1">Fasilitas Pertandingan</label>
+            <div v-for="(f, idx) in matchForm.facilities" :key="idx" class="flex gap-2">
+              <input v-model="matchForm.facilities[idx]" type="text" placeholder="Masukkan fasilitas..." class="flex-1 bg-surface-container border border-outline-variant rounded-xl px-4 py-2 focus:outline-none" />
+              <button @click.prevent="removeFacility(idx)" class="text-red-400 hover:text-red-500">
+                <span class="material-symbols-outlined">delete</span>
+              </button>
+            </div>
+            <button @click.prevent="addFacility" class="flex items-center gap-1 text-[10px] font-bold text-primary hover:opacity-70 transition-all pt-2">
+              <span class="material-symbols-outlined text-sm">add_circle</span>
+              Tambah Fasilitas
+            </button>
           </div>
 
           <div class="pt-4">
