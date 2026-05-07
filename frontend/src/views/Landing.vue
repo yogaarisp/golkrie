@@ -139,6 +139,11 @@ const submitRegistration = async () => {
   }
 };
 
+const formatPrice = (price) => {
+  if (!price) return '0';
+  return new Intl.NumberFormat('id-ID').format(price);
+}
+
 const formatDate = (dateString) => {
   if (!dateString) return 'TBA';
   const options = { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' };
@@ -260,11 +265,11 @@ const formatTime = (dateString) => {
                   <div class="flex-1 pt-0.5">
                     <div class="flex justify-between items-center mb-1.5">
                       <span class="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/60">Kiper (GK)</span>
-                      <span class="text-sm font-black text-white">Rp {{ match.price_gk }}</span>
+                      <span class="text-sm font-black text-white">Rp {{ formatPrice(match.price_gk) }}</span>
                     </div>
                     <div class="flex justify-between items-center">
                       <span class="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/60">Pemain (Player)</span>
-                      <span class="text-sm font-black text-white">Rp {{ match.price }}</span>
+                      <span class="text-sm font-black text-white">Rp {{ formatPrice(match.price) }}</span>
                     </div>
                   </div>
                 </div>
