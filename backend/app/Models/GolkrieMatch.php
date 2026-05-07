@@ -25,6 +25,7 @@ class GolkrieMatch extends Model
         'media_url',
         'status',
         'team_config',
+        'facilities',
     ];
 
     protected $casts = [

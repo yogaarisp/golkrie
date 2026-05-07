@@ -23,7 +23,8 @@ const matchForm = ref({
   quota_fw: 4,
   price: '0',
   price_gk: '0',
-  status: 'upcoming'
+  status: 'upcoming',
+  facilities: `1. 2 Fotografer + Drone (situasional)\n2. Videografer\n3. Per orang main -+ 3 x 25 menit kotor\n4. Wasit lengkap\n5. Ballboy\n6. Minum\n7. Jersey\n8. Laundry\n9. Kitman`
 });
 
 // Auto-fill quotas based on match type
@@ -87,7 +88,8 @@ const openCreateModal = () => {
     quota_mf: 4,
     quota_fw: 4,
     price: '0',
-    price_gk: '0'
+    price_gk: '0',
+    facilities: `1. 2 Fotografer + Drone (situasional)\n2. Videografer\n3. Per orang main -+ 3 x 25 menit kotor\n4. Wasit lengkap\n5. Ballboy\n6. Minum\n7. Jersey\n8. Laundry\n9. Kitman`
   };
   isModalOpen.value = true;
 };
@@ -107,7 +109,8 @@ const openEditModal = (match) => {
     quota_mf: match.quota_mf || 4,
     quota_fw: match.quota_fw || 4,
     price: match.price,
-    price_gk: match.price_gk || '0'
+    price_gk: match.price_gk || '0',
+    facilities: match.facilities || ''
   };
   isModalOpen.value = true;
 };
@@ -170,32 +173,18 @@ const shareToWA = async (match) => {
     }
 
     let message = `*${match.match_name}*\n\n`;
-    message += `\u{1F5D3}\u{FE0F}: *${formattedDate} (tgl merah \u{1F534})*\n`;
-    message += `\u{1F552}: *Kick off ${formattedTime}${endTime}*\n`;
-    message += `\u{1F3DF}\u{FE0F}: *${match.location}*\n\n`;
+    message += `🗓️: *${formattedDate}*\n`;
+    message += `🕒: *Kick off ${formattedTime}${endTime}*\n`;
+    message += `🏟️: *${match.location}*\n\n`;
     
     message += `*HTM*\n`;
     message += `Player ${Math.floor(match.price/1000)}K\n`;
     message += `Kiper ${Math.floor(match.price_gk/1000)}K\n\n`;
     
-    // Bold bank names in payment info
-    let bankInfo = settings.bank_account || '';
-    ['BCA', 'Mandiri', 'BRI', 'BNI', 'Danamon', 'Permata'].forEach(bank => {
-      const regex = new RegExp(bank, 'gi');
-      bankInfo = bankInfo.replace(regex, `*${bank}*`);
-    });
-    message += `*PEMBAYARAN* ${bankInfo}\n\n`;
+    message += `*PEMBAYARAN* ${settings.bank_account || ''}\n\n`;
     
     message += `Fasilitas\n`;
-    message += `1. 2 Fotografer + Drone (situasional)\n`;
-    message += `2. Videografer\n`;
-    message += `3. Per orang main -+ 3 x 25 menit kotor\n`;
-    message += `4. Wasit lengkap\n`;
-    message += `5. Ballboy\n`;
-    message += `6. Minum\n`;
-    message += `7. Jersey\n`;
-    message += `8. Laundry\n`;
-    message += `9. Kitman\n\n`;
+    message += `${match.facilities || ''}\n\n`;
     
     message += `*LIST:*\n`;
     
@@ -218,7 +207,7 @@ const shareToWA = async (match) => {
       if (pos !== 'GK' && isFirstPlayerPos) {
         message += `\nPlayer\n`;
         isFirstPlayerPos = false;
-        playerCount = 1;
+        playerCount = 1; // Reset for players group
       }
       
       message += `${posLabels[pos]}\n`;
@@ -227,26 +216,24 @@ const shareToWA = async (match) => {
       
       for (let i = 0; i < quota; i++) {
         const p = posPlayers[i];
-        const paidEmoji = p?.is_paid ? ' \u{1F4B8}' : '';
+        const paidEmoji = p?.is_paid ? ' 💸' : '';
         const count = pos === 'GK' ? i + 1 : playerCount;
         message += `${count}. ${p ? p.player_name + paidEmoji : ''}\n`;
         if (pos !== 'GK') playerCount++;
       }
     });
 
-    message += `\n*Waiting List :*\n`;
     const waitingList = registrations.filter(r => !r.is_accepted);
     if (waitingList.length > 0) {
+      message += `\n*Waiting List :*\n`;
       waitingList.forEach((p, i) => {
         message += `${i+1}. ${p.player_name}\n`;
       });
-    } else {
-      message += `1. .\n2. .\n3. .\n4. \nDst.\n`;
     }
 
     message += `\n*Harap konfirmasi pembayaran, bila cancel dan tak ada pengganti, uang hangus*\n`;
     message += `*wajib dicermati*\n\n`;
-    message += `*TERIMAKASIH \u{1F64F}*\n`;
+    message += `*TERIMAKASIH 🙏*\n`;
     if (match.location_url) message += `${match.location_url}`;
 
     window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
@@ -407,6 +394,11 @@ const shareToWA = async (match) => {
               <label class="block text-[10px] font-bold uppercase text-on-surface-variant mb-1">Harga (Pemain Lain)</label>
               <input v-model="matchForm.price" type="text" class="w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-2 focus:outline-none" />
             </div>
+          </div>
+
+          <div>
+            <label class="block text-[10px] font-bold uppercase text-on-surface-variant mb-1">Fasilitas (Pisahkan per baris)</label>
+            <textarea v-model="matchForm.facilities" rows="6" class="w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 focus:outline-none focus:border-primary transition-all font-mono text-xs"></textarea>
           </div>
 
           <div class="pt-4">
