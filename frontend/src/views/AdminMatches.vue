@@ -170,9 +170,9 @@ const shareToWA = async (match) => {
     }
 
     let message = `*${match.match_name}*\n\n`;
-    message += ` 🗓️: *${formattedDate} (tgl merah 🔴)*\n`;
-    message += `🕒: *Kick off ${formattedTime}${endTime}*\n`;
-    message += `🏟️: *${match.location}*\n\n`;
+    message += `\u{1F5D3}\u{FE0F}: *${formattedDate} (tgl merah \u{1F534})*\n`;
+    message += `\u{1F552}: *Kick off ${formattedTime}${endTime}*\n`;
+    message += `\u{1F3DF}\u{FE0F}: *${match.location}*\n\n`;
     
     message += `*HTM*\n`;
     message += `Player ${Math.floor(match.price/1000)}K\n`;
@@ -227,7 +227,7 @@ const shareToWA = async (match) => {
       
       for (let i = 0; i < quota; i++) {
         const p = posPlayers[i];
-        const paidEmoji = p?.is_paid ? ' 💸' : '';
+        const paidEmoji = p?.is_paid ? ' \u{1F4B8}' : '';
         const count = pos === 'GK' ? i + 1 : playerCount;
         message += `${count}. ${p ? p.player_name + paidEmoji : ''}\n`;
         if (pos !== 'GK') playerCount++;
@@ -246,7 +246,7 @@ const shareToWA = async (match) => {
 
     message += `\n*Harap konfirmasi pembayaran, bila cancel dan tak ada pengganti, uang hangus*\n`;
     message += `*wajib dicermati*\n\n`;
-    message += `*TERIMAKASIH 🙏*\n`;
+    message += `*TERIMAKASIH \u{1F64F}*\n`;
     if (match.location_url) message += `${match.location_url}`;
 
     window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
