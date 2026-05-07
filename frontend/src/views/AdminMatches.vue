@@ -170,7 +170,7 @@ const shareToWA = async (match) => {
     }
 
     let message = `*${match.match_name}*\n\n`;
-    message += `🗓️: *${formattedDate}*\n`;
+    message += ` 🗓️: *${formattedDate} (tgl merah 🔴)*\n`;
     message += `🕒: *Kick off ${formattedTime}${endTime}*\n`;
     message += `🏟️: *${match.location}*\n\n`;
     
@@ -178,7 +178,13 @@ const shareToWA = async (match) => {
     message += `Player ${Math.floor(match.price/1000)}K\n`;
     message += `Kiper ${Math.floor(match.price_gk/1000)}K\n\n`;
     
-    message += `*PEMBAYARAN* ${settings.bank_account || ''}\n\n`;
+    // Bold bank names in payment info
+    let bankInfo = settings.bank_account || '';
+    ['BCA', 'Mandiri', 'BRI', 'BNI', 'Danamon', 'Permata'].forEach(bank => {
+      const regex = new RegExp(bank, 'gi');
+      bankInfo = bankInfo.replace(regex, `*${bank}*`);
+    });
+    message += `*PEMBAYARAN* ${bankInfo}\n\n`;
     
     message += `Fasilitas\n`;
     message += `1. 2 Fotografer + Drone (situasional)\n`;
@@ -212,7 +218,7 @@ const shareToWA = async (match) => {
       if (pos !== 'GK' && isFirstPlayerPos) {
         message += `\nPlayer\n`;
         isFirstPlayerPos = false;
-        playerCount = 1; // Reset for players group
+        playerCount = 1;
       }
       
       message += `${posLabels[pos]}\n`;
@@ -228,12 +234,14 @@ const shareToWA = async (match) => {
       }
     });
 
+    message += `\n*Waiting List :*\n`;
     const waitingList = registrations.filter(r => !r.is_accepted);
     if (waitingList.length > 0) {
-      message += `\n*Waiting List :*\n`;
       waitingList.forEach((p, i) => {
         message += `${i+1}. ${p.player_name}\n`;
       });
+    } else {
+      message += `1. .\n2. .\n3. .\n4. \nDst.\n`;
     }
 
     message += `\n*Harap konfirmasi pembayaran, bila cancel dan tak ada pengganti, uang hangus*\n`;
