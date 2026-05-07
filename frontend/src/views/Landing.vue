@@ -250,7 +250,15 @@ const formatTime = (dateString) => {
                 </div>
               </div>
 
-              <h3 class="text-xl font-black mb-5 text-white uppercase italic tracking-tighter">{{ match.match_name }}</h3>
+              <div class="flex-1">
+                <a v-if="match.location_url" :href="match.location_url" target="_blank" class="block group/title">
+                  <h3 class="text-xl font-black text-white uppercase tracking-tighter mb-1 group-hover/title:text-primary transition-colors flex items-center gap-2">
+                    {{ match.match_name }}
+                    <span class="material-symbols-outlined text-sm opacity-0 group-hover/title:opacity-100 transition-all -translate-x-2 group-hover/title:translate-x-0">near_me</span>
+                  </h3>
+                </a>
+                <h3 v-else class="text-xl font-black text-white uppercase tracking-tighter mb-1">{{ match.match_name }}</h3>
+              </div>
               
               <div class="space-y-4 mb-8 bg-surface-container/30 p-5 rounded-2xl border border-white/5">
                 <div class="flex items-center gap-4">
