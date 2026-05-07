@@ -206,10 +206,20 @@ const shareToWA = async (match) => {
     message += `🏟️: *${match.location}*\n\n`;
     
     message += `*HTM*\n`;
-    message += `Player ${Math.floor(match.price/1000)}K\n`;
-    message += `Kiper ${Math.floor(match.price_gk/1000)}K\n\n`;
+    message += `Player ${match.price ? Math.floor(match.price/1000) : 0}K\n`;
+    message += `Kiper ${match.price_gk ? Math.floor(match.price_gk/1000) : 0}K\n\n`;
     
-    message += `*PEMBAYARAN* ${settings.bank_account || ''}\n\n`;
+    let bankInfo = settings.bank_account || '';
+    // Add bolding to bank names (e.g. BCA, Mandiri) if they are in the format "BANK NUMBER"
+    bankInfo = bankInfo.split('|').map(s => {
+      const parts = s.trim().split(' ');
+      if (parts.length >= 2) {
+        parts[0] = `*${parts[0]}*`; // Bold the first word (Bank name)
+      }
+      return parts.join(' ');
+    }).join(' | ');
+
+    message += `*PEMBAYARAN* ${bankInfo}\n\n`;
     
     message += `Fasilitas\n`;
     if (match.facilities && Array.isArray(match.facilities)) {
