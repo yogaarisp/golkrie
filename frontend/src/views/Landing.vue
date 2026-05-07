@@ -379,9 +379,11 @@ const formatTime = (dateString) => {
               <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 <div v-for="pos in (activeSquadMatch.title === 'Big Pitch' ? [
                   {key: 'GK', label: 'Goalkeeper', quota: activeSquadMatch.quota_gk, icon: 'sports_handball'},
-                  {key: 'DF', label: 'Defender', quota: activeSquadMatch.quota_df, icon: 'shield'},
-                  {key: 'MF', label: 'Midfielder', quota: activeSquadMatch.quota_mf, icon: 'settings_input_component'},
-                  {key: 'FW', label: 'Forward', quota: activeSquadMatch.quota_fw, icon: 'bolt'}
+                  {key: 'CB', label: 'Center Back', quota: 8, icon: 'shield'},
+                  {key: 'RLB', label: 'Full Back', quota: 8, icon: 'shield_person'},
+                  {key: 'MF', label: 'Midfielder', quota: 12, icon: 'settings_input_component'},
+                  {key: 'RLWF', label: 'Winger', quota: 8, icon: 'bolt'},
+                  {key: 'CF', label: 'Striker', quota: 4, icon: 'target'}
                 ] : [
                   {key: 'GK', label: 'Kiper', quota: activeSquadMatch.quota_gk, icon: 'sports_handball'},
                   {key: 'DF', label: 'Player', quota: activeSquadMatch.quota_df, icon: 'group'}
@@ -470,12 +472,14 @@ const formatTime = (dateString) => {
 
           <div>
             <label class="block text-xs font-black uppercase text-on-surface-variant mb-3 tracking-widest">Posisi Lapangan</label>
-            <div class="grid gap-3" :class="upcomingMatches.find(m => m.id === registrationForm.match_id)?.title === 'Big Pitch' ? 'grid-cols-4' : 'grid-cols-2'">
+            <div class="grid gap-3" :class="upcomingMatches.find(m => m.id === registrationForm.match_id)?.title === 'Big Pitch' ? 'grid-cols-3' : 'grid-cols-2'">
               <button v-for="pos in (upcomingMatches.find(m => m.id === registrationForm.match_id)?.title === 'Big Pitch' ? [
-                {key: 'GK', label: 'GK', quota: upcomingMatches.find(m => m.id === registrationForm.match_id)?.quota_gk || 2},
-                {key: 'DF', label: 'DF', quota: upcomingMatches.find(m => m.id === registrationForm.match_id)?.quota_df || 4},
-                {key: 'MF', label: 'MF', quota: upcomingMatches.find(m => m.id === registrationForm.match_id)?.quota_mf || 4},
-                {key: 'FW', label: 'FW', quota: upcomingMatches.find(m => m.id === registrationForm.match_id)?.quota_fw || 4}
+                {key: 'GK', label: 'GK', quota: 4},
+                {key: 'CB', label: 'CB', quota: 8},
+                {key: 'RLB', label: 'RLB', quota: 8},
+                {key: 'MF', label: 'MF', quota: 12},
+                {key: 'RLWF', label: 'RLWF', quota: 8},
+                {key: 'CF', label: 'CF', quota: 4}
               ] : [
                 {key: 'GK', label: 'Kiper', quota: upcomingMatches.find(m => m.id === registrationForm.match_id)?.quota_gk || 2},
                 {key: 'DF', label: 'Player', quota: upcomingMatches.find(m => m.id === registrationForm.match_id)?.quota_df || 4}
@@ -495,11 +499,14 @@ const formatTime = (dateString) => {
             <p v-if="registrationForm.position" class="mt-3 text-[10px] text-on-surface-variant italic uppercase tracking-wider">
               Slot tersisa: {{ 
                 ({
-                  GK: upcomingMatches.find(m => m.id === registrationForm.match_id)?.quota_gk || 2,
-                  DF: upcomingMatches.find(m => m.id === registrationForm.match_id)?.quota_df || 4,
-                  MF: upcomingMatches.find(m => m.id === registrationForm.match_id)?.quota_mf || 4,
-                  FW: upcomingMatches.find(m => m.id === registrationForm.match_id)?.quota_fw || 4
-                }[registrationForm.position]) - 
+                  GK: 4,
+                  CB: 8,
+                  RLB: 8,
+                  MF: 12,
+                  RLWF: 8,
+                  CF: 4,
+                  DF: upcomingMatches.find(m => m.id === registrationForm.match_id)?.quota_df || 4
+                }[registrationForm.position] || 0) - 
                 squadList.filter(p => p.position === registrationForm.position).length 
               }}
             </p>
