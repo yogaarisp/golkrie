@@ -65,12 +65,25 @@ const fetchLandingData = async () => {
 };
 
 const copyToClipboard = (text, id) => {
-  navigator.clipboard.writeText(text).then(() => {
+  // Extract only numbers if it looks like a bank account line
+  const accountNumber = text.replace(/[^0-9]/g, '');
+  const finalContent = accountNumber.length >= 5 ? accountNumber : text;
+
+  navigator.clipboard.writeText(finalContent).then(() => {
     copiedId.value = id;
     setTimeout(() => {
       if (copiedId.value === id) copiedId.value = null;
     }, 2000);
   });
+};
+
+const getWhatsAppLink = (phone, message = '') => {
+  if (!phone) return '#';
+  let cleanPhone = phone.replace(/[^0-9]/g, '');
+  if (cleanPhone.startsWith('0')) {
+    cleanPhone = '62' + cleanPhone.slice(1);
+  }
+  return `https://wa.me/${cleanPhone}${message ? '?text=' + encodeURIComponent(message) : ''}`;
 };
 
 const selectMatchForSquad = async (match) => {
@@ -131,9 +144,16 @@ const handleNameInput = () => {
 const submitRegistration = async () => {
   try {
     const response = await axios.post('/api/register', registrationForm.value);
+    const match = upcomingMatches.value.find(m => m.id === registrationForm.value.match_id);
+    
     alert(response.data.message);
     closeJoinModal();
     fetchLandingData();
+
+    // Redirect to WhatsApp for confirmation
+    const waMessage = `Halo Admin Golkrie,\n\nSaya ingin konfirmasi pendaftaran:\nMatch: ${match?.match_name} (${match?.title})\nNama: ${registrationForm.value.full_name}\nPosisi: ${registrationForm.value.position}\n\nSaya akan segera mengirimkan bukti bayar. Terima kasih!`;
+    window.open(getWhatsAppLink(settings.value.whatsapp_contact, waMessage), '_blank');
+    
   } catch (e) {
     alert(e.response?.data?.message || 'Pendaftaran gagal.');
   }
@@ -518,7 +538,7 @@ const formatTime = (dateString) => {
                 </div>
               </a>
 
-              <a v-if="settings.whatsapp_contact" :href="'https://wa.me/' + settings.whatsapp_contact.replace(/[^0-9]/g, '')" target="_blank" class="flex items-center gap-3 bg-surface-container px-6 py-4 rounded-2xl border border-outline-variant/40 hover:border-green-500/50 transition-all group">
+              <a v-if="settings.whatsapp_contact" :href="getWhatsAppLink(settings.whatsapp_contact)" target="_blank" class="flex items-center gap-3 bg-surface-container px-6 py-4 rounded-2xl border border-outline-variant/40 hover:border-green-500/50 transition-all group">
                 <div class="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center text-green-500 group-hover:scale-110 transition-transform">
                   <span class="material-symbols-outlined">chat</span>
                 </div>
