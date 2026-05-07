@@ -386,12 +386,12 @@ const formatTime = (dateString) => {
             <div v-else class="px-6 max-w-7xl mx-auto">
               <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 <div v-for="pos in (activeSquadMatch.title === 'Big Pitch' ? [
-                  {key: 'GK', label: 'Goalkeeper', quota: activeSquadMatch.quota_gk, icon: 'sports_handball'},
-                  {key: 'CB', label: 'Center Back', quota: 8, icon: 'shield'},
-                  {key: 'RLB', label: 'Full Back', quota: 8, icon: 'shield_person'},
-                  {key: 'MF', label: 'Midfielder', quota: 12, icon: 'settings_input_component'},
-                  {key: 'RLWF', label: 'Winger', quota: 8, icon: 'bolt'},
-                  {key: 'CF', label: 'Striker', quota: 4, icon: 'target'}
+                  {key: 'GK', label: 'GK', quota: 4, icon: 'sports_handball'},
+                  {key: 'CB', label: 'CB', quota: 8, icon: 'shield'},
+                  {key: 'RLB', label: 'RLB', quota: 8, icon: 'shield_person'},
+                  {key: 'MF', label: 'MF', quota: 12, icon: 'settings_input_component'},
+                  {key: 'RLWF', label: 'RLWF', quota: 8, icon: 'bolt'},
+                  {key: 'CF', label: 'CF', quota: 4, icon: 'target'}
                 ] : [
                   {key: 'GK', label: 'Kiper', quota: activeSquadMatch.quota_gk, icon: 'sports_handball'},
                   {key: 'DF', label: 'Player', quota: activeSquadMatch.quota_df, icon: 'group'}
