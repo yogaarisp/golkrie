@@ -8,7 +8,9 @@ const matchHistory = ref([]);
 const squadList = ref([]);
 const activeMatchId = ref(null);
 const activeSquadMatch = ref(null);
-const loading = ref(true);
+const loading = ref(false);
+const matchesLoading = ref(true);
+const sponsorsLoading = ref(true);
 const squadLoading = ref(false);
 const settings = ref({
   app_name: 'Golkrie',
@@ -58,8 +60,9 @@ const fetchLandingData = async () => {
     }
   } catch (e) {
     console.error('Failed to fetch landing data:', e.response || e);
-    // Ensure we still turn off loading even on total failure
   } finally {
+    matchesLoading.value = false;
+    sponsorsLoading.value = false;
     loading.value = false;
   }
 };
@@ -186,15 +189,19 @@ const formatTime = (dateString) => {
 
 <template>
   <PublicLayout :settings="settings">
-    <div v-if="loading" class="flex items-center justify-center h-screen">
-        <div class="spinner !w-12 !h-12"></div>
-    </div>
-    
-    <div v-else>
+    <div>
         <!-- SECTION 1: HOME (Hero) -->
         <section id="home" class="relative h-[600px] md:h-[800px] flex items-start justify-center pt-24 md:pt-40 overflow-hidden">
           <div class="absolute inset-0 z-0">
-            <img alt="Football pitch" class="w-full h-full object-cover" src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&q=80&w=1200" />
+            <img 
+              alt="Football pitch" 
+              class="w-full h-full object-cover" 
+              src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=1200&q=75&fm=webp" 
+              srcset="https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=600&q=75&fm=webp 600w, https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=1200&q=75&fm=webp 1200w"
+              sizes="(max-width: 768px) 100vw, 1200px"
+              fetchpriority="high"
+              decoding="async"
+            />
             <div class="absolute inset-0 bg-gradient-to-b from-background/95 via-background/70 to-background"></div>
           </div>
           <div class="relative z-10 text-center px-6 max-w-5xl mx-auto">
@@ -226,7 +233,25 @@ const formatTime = (dateString) => {
             <p class="text-on-surface-variant text-base">Pilih jadwal pertandingan dan amankan slot kamu sekarang.</p>
           </div>
 
-          <div v-if="!upcomingMatches || upcomingMatches.length === 0" class="w-full text-center py-20 px-6">
+          <div v-if="matchesLoading" class="px-6 max-w-7xl mx-auto flex flex-wrap justify-center gap-6 md:gap-8">
+            <div v-for="i in 3" :key="'skeleton-'+i" 
+              class="bento-card p-6 shadow-2xl w-full md:w-[340px] bg-surface-container/20 backdrop-blur-sm relative overflow-hidden animate-pulse"
+            >
+              <div class="flex justify-between items-start mb-5">
+                <div class="h-6 w-20 bg-white/10 rounded-full"></div>
+                <div class="h-6 w-16 bg-white/10 rounded"></div>
+              </div>
+              <div class="h-8 w-48 bg-white/10 rounded-xl mb-6"></div>
+              <div class="space-y-4 mb-8 bg-surface-container/30 p-5 rounded-2xl border border-white/5">
+                <div class="h-4 w-3/4 bg-white/10 rounded"></div>
+                <div class="h-4 w-1/2 bg-white/10 rounded"></div>
+                <div class="h-4 w-2/3 bg-white/10 rounded"></div>
+              </div>
+              <div class="h-12 w-full bg-white/10 rounded-xl"></div>
+            </div>
+          </div>
+
+          <div v-else-if="!upcomingMatches || upcomingMatches.length === 0" class="w-full text-center py-20 px-6">
             <p class="text-on-surface-variant font-bold italic tracking-widest uppercase opacity-50">Belum ada jadwal pertandingan.</p>
           </div>
           <div v-else class="px-6 max-w-7xl mx-auto flex flex-wrap justify-center gap-6 md:gap-8">
