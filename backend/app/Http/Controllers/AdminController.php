@@ -2,176 +2,224 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\GolkrieMatch;
-use App\Models\Member;
-use App\Models\Registration;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
+use App\Services\SupabaseService;
 
 class AdminController extends Controller
 {
+    protected SupabaseService $sb;
+
+    public function __construct(SupabaseService $sb)
+    {
+        $this->sb = $sb;
+    }
+
     public function index()
     {
+        $totalMembers    = $this->sb->count('members');
+        $upcomingMatches = $this->sb->count('matches', ['status' => 'eq.upcoming']);
+        $finishedMatches = $this->sb->count('matches', ['status' => 'eq.finished']);
+
+        $pendingRegs = $this->sb->select('registrations', [
+            'is_accepted' => 'eq.false',
+            'order'       => 'created_at.desc',
+            'select'      => '*',
+        ]);
+
+        // Attach match & member data
+        foreach ($pendingRegs as &$reg) {
+            $matches = $this->sb->select('matches', ['id' => 'eq.' . $reg['match_id'], 'limit' => 1]);
+            $members = $this->sb->select('members', ['id' => 'eq.' . $reg['member_id'], 'limit' => 1]);
+            $reg['match']  = $matches[0] ?? null;
+            $reg['member'] = $members[0] ?? null;
+        }
+
         return response()->json([
             'stats' => [
-                'totalMembers' => Member::count(),
-                'upcomingMatches' => GolkrieMatch::where('status', 'upcoming')->count(),
-                'finishedMatches' => GolkrieMatch::where('status', 'finished')->count(),
+                'totalMembers'    => $totalMembers,
+                'upcomingMatches' => $upcomingMatches,
+                'finishedMatches' => $finishedMatches,
             ],
-            'pendingRegistrations' => Registration::where('is_accepted', false)
-                ->with(['match', 'member'])
-                ->orderBy('created_at', 'desc')
-                ->get(),
+            'pendingRegistrations' => $pendingRegs,
         ]);
     }
 
-    public function accept(Registration $registration)
+    public function accept(Request $request, $registration)
     {
-        $registration->update(['is_accepted' => true]);
+        $this->sb->update('registrations', ['id' => $registration], [
+            'is_accepted' => true,
+            'updated_at'  => now()->toISOString(),
+        ]);
         return response()->json(['message' => 'Pendaftaran diterima!']);
     }
 
-    public function reject(Registration $registration)
+    public function reject(Request $request, $registration)
     {
-        $registration->delete();
+        $this->sb->delete('registrations', ['id' => $registration]);
         return response()->json(['message' => 'Pendaftaran ditolak.']);
     }
 
     public function matches()
     {
-        return response()->json([
-            'matches' => GolkrieMatch::withCount('registrations')->orderBy('date_time', 'desc')->get()
+        $matches = $this->sb->select('matches', [
+            'order'  => 'date_time.desc',
+            'select' => '*',
         ]);
+
+        foreach ($matches as &$match) {
+            $regs = $this->sb->select('registrations', [
+                'match_id' => 'eq.' . $match['id'],
+                'select'   => 'id',
+            ]);
+            $match['registrations_count'] = count($regs);
+        }
+
+        return response()->json(['matches' => $matches]);
     }
 
     public function storeMatch(Request $request)
     {
         $validated = $request->validate([
-            'title' => 'required|string',
-            'match_name' => 'required|string',
-            'date_time' => 'required|date',
-            'end_time' => 'nullable|date',
-            'location' => 'required|string',
+            'title'        => 'required|string',
+            'match_name'   => 'required|string',
+            'date_time'    => 'required|date',
+            'end_time'     => 'nullable|date',
+            'location'     => 'required|string',
             'location_url' => 'nullable|string',
-            'quota' => 'required|integer',
-            'quota_gk' => 'required|integer',
-            'quota_df' => 'required|integer',
-            'quota_mf' => 'required|integer',
-            'quota_fw' => 'required|integer',
-            'price' => 'required|string',
-            'price_gk' => 'required|string',
+            'quota'        => 'required|integer',
+            'quota_gk'     => 'required|integer',
+            'quota_df'     => 'required|integer',
+            'quota_mf'     => 'required|integer',
+            'quota_fw'     => 'required|integer',
+            'price'        => 'required|string',
+            'price_gk'     => 'required|string',
         ]);
 
-        $match = GolkrieMatch::create($validated);
+        $validated['status']     = 'upcoming';
+        $validated['created_at'] = now()->toISOString();
+        $validated['updated_at'] = now()->toISOString();
+
+        $match = $this->sb->insert('matches', $validated);
         return response()->json($match);
     }
 
-    public function updateMatch(Request $request, GolkrieMatch $match)
+    public function updateMatch(Request $request, $match)
     {
-        $validated = $request->validate([
-            'title' => 'string',
-            'match_name' => 'string',
-            'date_time' => 'date',
-            'end_time' => 'nullable|date',
-            'location' => 'string',
-            'location_url' => 'nullable|string',
-            'quota' => 'integer',
-            'quota_gk' => 'integer',
-            'quota_df' => 'integer',
-            'quota_mf' => 'integer',
-            'quota_fw' => 'integer',
-            'price' => 'string',
-            'price_gk' => 'string',
-            'status' => 'string|in:upcoming,finished'
+        $validated = $request->only([
+            'title', 'match_name', 'date_time', 'end_time', 'location',
+            'location_url', 'quota', 'quota_gk', 'quota_df', 'quota_mf',
+            'quota_fw', 'price', 'price_gk', 'status', 'facilities', 'media_url'
         ]);
+        $validated['updated_at'] = now()->toISOString();
 
-        $match->update($validated);
-        return response()->json($match);
+        $result = $this->sb->update('matches', ['id' => $match], $validated);
+        return response()->json($result[0] ?? ['message' => 'Updated']);
     }
 
-    public function deleteMatch(GolkrieMatch $match)
+    public function deleteMatch($match)
     {
-        $match->delete();
+        $this->sb->delete('matches', ['id' => $match]);
         return response()->json(['message' => 'Match dihapus!']);
     }
 
     public function members()
     {
-        return response()->json(['members' => \App\Models\Member::orderBy('full_name')->get()]);
+        $members = $this->sb->select('members', ['order' => 'full_name.asc']);
+        return response()->json(['members' => $members]);
     }
 
     public function storeMember(Request $request)
     {
         $validated = $request->validate([
-            'full_name' => 'required|string|max:255',
+            'full_name'    => 'required|string|max:255',
             'phone_number' => 'nullable|string|max:20',
         ]);
-        $member = \App\Models\Member::create($validated);
+        $validated['created_at'] = now()->toISOString();
+        $validated['updated_at'] = now()->toISOString();
+
+        $member = $this->sb->insert('members', $validated);
         return response()->json(['message' => 'Member ditambahkan!', 'member' => $member]);
     }
 
-    public function updateMember(Request $request, \App\Models\Member $member)
+    public function updateMember(Request $request, $member)
     {
         $validated = $request->validate([
-            'full_name' => 'required|string|max:255',
+            'full_name'    => 'required|string|max:255',
             'phone_number' => 'nullable|string|max:20',
         ]);
-        $member->update($validated);
+        $validated['updated_at'] = now()->toISOString();
+
+        $this->sb->update('members', ['id' => $member], $validated);
         return response()->json(['message' => 'Member diupdate!']);
     }
 
-    public function deleteMember(\App\Models\Member $member)
+    public function deleteMember($member)
     {
-        $member->delete();
+        $this->sb->delete('members', ['id' => $member]);
         return response()->json(['message' => 'Member dihapus!']);
     }
 
     public function sponsors()
     {
-        return response()->json(['sponsors' => \App\Models\Sponsor::orderBy('order')->get()]);
+        $sponsors = $this->sb->select('sponsors', ['order' => 'order.asc']);
+        return response()->json(['sponsors' => $sponsors]);
     }
 
     public function storeSponsor(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
+            'name'     => 'required|string|max:255',
             'logo_url' => 'required|string',
             'link_url' => 'nullable|string',
-            'order' => 'integer'
+            'order'    => 'integer',
         ]);
-        $sponsor = \App\Models\Sponsor::create($validated);
+        $validated['is_active']  = true;
+        $validated['created_at'] = now()->toISOString();
+        $validated['updated_at'] = now()->toISOString();
+
+        $sponsor = $this->sb->insert('sponsors', $validated);
         return response()->json(['message' => 'Sponsor ditambahkan!', 'sponsor' => $sponsor]);
     }
 
-    public function updateSponsor(Request $request, \App\Models\Sponsor $sponsor)
+    public function updateSponsor(Request $request, $sponsor)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'logo_url' => 'required|string',
-            'link_url' => 'nullable|string',
-            'order' => 'integer'
+            'name'      => 'required|string|max:255',
+            'logo_url'  => 'required|string',
+            'link_url'  => 'nullable|string',
+            'order'     => 'integer',
+            'is_active' => 'boolean',
         ]);
-        $sponsor->update($validated);
+        $validated['updated_at'] = now()->toISOString();
+
+        $this->sb->update('sponsors', ['id' => $sponsor], $validated);
         return response()->json(['message' => 'Sponsor diupdate!']);
     }
 
-    public function deleteSponsor(\App\Models\Sponsor $sponsor)
+    public function deleteSponsor($sponsor)
     {
-        $sponsor->delete();
+        $this->sb->delete('sponsors', ['id' => $sponsor]);
         return response()->json(['message' => 'Sponsor dihapus!']);
     }
 
     public function getSettings()
     {
-        return response()->json([
-            'settings' => \App\Models\Setting::all()->pluck('value', 'key')
-        ]);
+        $settingsRaw = $this->sb->select('settings', ['select' => 'key,value']);
+        $settings    = [];
+        foreach ($settingsRaw as $s) {
+            $settings[$s['key']] = $s['value'];
+        }
+        return response()->json(['settings' => $settings]);
     }
 
     public function updateSettings(Request $request)
     {
         foreach ($request->all() as $key => $value) {
-            \App\Models\Setting::updateOrCreate(['key' => $key], ['value' => $value]);
+            $this->sb->upsert('settings', [
+                'key'        => $key,
+                'value'      => $value,
+                'updated_at' => now()->toISOString(),
+            ], 'key');
         }
         return response()->json(['message' => 'Settings updated!']);
     }

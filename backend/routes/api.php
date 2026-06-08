@@ -41,7 +41,7 @@ Route::post('/register', [GolkrieController::class, 'register']);
 
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 
-Route::middleware('auth:sanctum')->prefix('admin')->group(function () {
+Route::middleware('supabase.auth')->prefix('admin')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
     
