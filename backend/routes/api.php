@@ -9,25 +9,28 @@ use App\Http\Controllers\Admin\TeamController;
 
 // Temporary debug - hapus setelah fix
 Route::get('/debug-env', function () {
+    $host = env('DB_HOST', '');
+    $user = env('DB_USERNAME', '');
+    $pass = env('DB_PASSWORD', '');
+    
     try {
-        $pdo = new PDO(
-            'pgsql:host=' . env('DB_HOST') . ';port=' . env('DB_PORT') . ';dbname=' . env('DB_DATABASE'),
-            env('DB_USERNAME'),
-            env('DB_PASSWORD')
-        );
+        $dsn = "pgsql:host=$host;port=" . env('DB_PORT', '5432') . ";dbname=" . env('DB_DATABASE', 'postgres') . ";sslmode=require";
+        $pdo = new PDO($dsn, $user, $pass, [PDO::ATTR_TIMEOUT => 5]);
         $dbStatus = 'CONNECTED';
     } catch (\Exception $e) {
-        $dbStatus = 'ERROR: ' . $e->getMessage();
+        $dbStatus = $e->getMessage();
     }
 
     return response()->json([
         'db_connection' => env('DB_CONNECTION', 'NOT SET'),
-        'db_host' => env('DB_HOST') ? 'SET' : 'NOT SET',
-        'db_username' => env('DB_USERNAME') ? 'SET' : 'NOT SET',
-        'db_password' => env('DB_PASSWORD') ? 'SET' : 'NOT SET',
+        'db_host' => $host ?: 'NOT SET',
+        'db_port' => env('DB_PORT', 'NOT SET'),
+        'db_username' => $user ?: 'NOT SET',
+        'db_username_len' => strlen($user),
+        'db_password_set' => $pass ? 'YES (len:' . strlen($pass) . ')' : 'NOT SET',
         'app_key' => env('APP_KEY') ? 'SET' : 'NOT SET',
         'db_status' => $dbStatus,
-        'vercel' => isset($_SERVER['VERCEL']) ? 'YES' : 'NO',
+        'vercel' => getenv('VERCEL') ?: (isset($_SERVER['VERCEL_URL']) ? 'YES' : 'NO'),
         'php_version' => PHP_VERSION,
     ]);
 });
