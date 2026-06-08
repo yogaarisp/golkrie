@@ -385,11 +385,11 @@ const formatTime = (dateString) => {
               </div>
 
               <button @click.stop="openJoinModal(match.id)" 
-                :disabled="match.registrations_count >= match.quota"
+                :disabled="match.registrations_count >= match.quota || new Date(match.date_time) < new Date()"
                 class="w-full py-4 rounded-xl font-black uppercase tracking-widest transition-all text-center text-sm"
-                :class="match.registrations_count >= match.quota ? 'bg-surface-container-high text-on-surface-variant cursor-not-allowed' : 'bg-primary text-white hover:bg-primary-dark shadow-xl shadow-primary/30 active:scale-95'"
+                :class="new Date(match.date_time) < new Date() ? 'bg-surface-container-high text-on-surface-variant/40 cursor-not-allowed' : match.registrations_count >= match.quota ? 'bg-surface-container-high text-on-surface-variant cursor-not-allowed' : 'bg-primary text-white hover:bg-primary-dark shadow-xl shadow-primary/30 active:scale-95'"
               >
-                {{ match.registrations_count >= match.quota ? 'Waitlist' : 'Amankan Slot' }}
+                {{ new Date(match.date_time) < new Date() ? 'Jadwal Selesai' : match.registrations_count >= match.quota ? 'Waitlist' : 'Amankan Slot' }}
               </button>
             </div>
           </div>
