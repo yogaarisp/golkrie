@@ -55,7 +55,13 @@ const fetchLandingData = async () => {
       // Use initial squad data from first response instead of making another call
       if (upcomingMatches.value && upcomingMatches.value.length > 0) {
         activeSquadMatch.value = upcomingMatches.value[0];
-        squadList.value = response.data.initialSquad || [];
+        // Hanya tampilkan squad kalau jadwal belum lewat
+        const firstMatch = upcomingMatches.value[0];
+        if (new Date(firstMatch.date_time) >= new Date()) {
+          squadList.value = response.data.initialSquad || [];
+        } else {
+          squadList.value = [];
+        }
       }
     }
   } catch (e) {
@@ -92,6 +98,13 @@ const getWhatsAppLink = (phone, message = '') => {
 const selectMatchForSquad = async (match) => {
   if (!match) return;
   activeSquadMatch.value = match;
+
+  // Jika jadwal sudah lewat, kosongkan squad
+  if (new Date(match.date_time) < new Date()) {
+    squadList.value = [];
+    return;
+  }
+
   squadLoading.value = true;
   try {
     const response = await axios.get(`/api/landing?match_id=${match.id}`);
@@ -395,9 +408,9 @@ const formatTime = (dateString) => {
           </div>
         </section>
 
-        <!-- SQUAD COMPOSITION (Dynamic Section) -->
+        <!-- SQUAD COMPOSITION (Dynamic Section) - hanya tampil kalau jadwal belum lewat -->
         <transition name="fade">
-          <section v-if="activeSquadMatch" class="py-24 bg-surface-container/5 border-y border-white/5">
+          <section v-if="activeSquadMatch && new Date(activeSquadMatch.date_time) >= new Date()" class="py-24 bg-surface-container/5 border-y border-white/5">
             <div class="px-6 max-w-7xl mx-auto mb-16 text-center">
               <span class="text-primary font-black uppercase tracking-[0.3em] text-xs mb-2 block">Line-up Details</span>
               <h2 class="text-3xl md:text-5xl font-black text-white mb-4 tracking-tighter uppercase italic">Squad <span class="text-primary">Composition</span></h2>
@@ -406,6 +419,12 @@ const formatTime = (dateString) => {
 
             <div v-if="squadLoading" class="flex justify-center py-20">
               <div class="spinner !w-10 !h-10"></div>
+            </div>
+
+            <!-- Pesan jika jadwal sudah lewat -->
+            <div v-else-if="new Date(activeSquadMatch.date_time) < new Date()" class="flex flex-col items-center justify-center py-20 text-center">
+              <span class="material-symbols-outlined text-5xl text-on-surface-variant/30 mb-4">event_busy</span>
+              <p class="text-on-surface-variant/50 font-bold uppercase tracking-widest text-sm">Jadwal Sudah Selesai</p>
             </div>
 
             <div v-else class="px-6 max-w-7xl mx-auto">
