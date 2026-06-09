@@ -410,7 +410,7 @@ const formatTime = (dateString) => {
 
         <!-- SQUAD COMPOSITION (Dynamic Section) - hanya tampil kalau jadwal belum lewat -->
         <transition name="fade">
-          <section v-if="activeSquadMatch && new Date(activeSquadMatch.date_time) >= new Date()" class="py-24 bg-surface-container/5 border-y border-white/5">
+          <section v-if="activeSquadMatch" class="py-24 bg-surface-container/5 border-y border-white/5">
             <div class="px-6 max-w-7xl mx-auto mb-16 text-center">
               <span class="text-primary font-black uppercase tracking-[0.3em] text-xs mb-2 block">Line-up Details</span>
               <h2 class="text-3xl md:text-5xl font-black text-white mb-4 tracking-tighter uppercase italic">Squad <span class="text-primary">Composition</span></h2>
@@ -421,10 +421,11 @@ const formatTime = (dateString) => {
               <div class="spinner !w-10 !h-10"></div>
             </div>
 
-            <!-- Pesan jika jadwal sudah lewat -->
+            <!-- Jadwal sudah lewat - tampilkan placeholder coming soon -->
             <div v-else-if="new Date(activeSquadMatch.date_time) < new Date()" class="flex flex-col items-center justify-center py-20 text-center">
-              <span class="material-symbols-outlined text-5xl text-on-surface-variant/30 mb-4">event_busy</span>
-              <p class="text-on-surface-variant/50 font-bold uppercase tracking-widest text-sm">Jadwal Sudah Selesai</p>
+              <span class="material-symbols-outlined text-6xl text-primary/20 mb-4">calendar_clock</span>
+              <p class="text-on-surface-variant/40 font-black uppercase tracking-[0.3em] text-sm mb-2">Next Event</p>
+              <p class="text-on-surface-variant/25 text-xs uppercase tracking-widest">Squad akan diumumkan segera</p>
             </div>
 
             <div v-else class="px-6 max-w-7xl mx-auto">
