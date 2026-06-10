@@ -7,6 +7,7 @@ const matches = ref([]);
 const loading = ref(true);
 const isModalOpen = ref(false);
 const editingMatch = ref(null);
+const defaultFacilities = ref([]);
 
 const matchForm = ref({
   id: null,
@@ -24,18 +25,31 @@ const matchForm = ref({
   price: '0',
   price_gk: '0',
   status: 'upcoming',
-  facilities: [
-    '2 Fotografer + Drone (situasional)',
-    'Videografer',
-    '-+ 3 x 25 menit kotor per orang',
-    'Wasit lengkap',
-    'Ballboy',
-    'Minum',
-    'Jersey',
-    'Laundry',
-    'Kitman'
-  ]
+  facilities: []
 });
+
+const fetchDefaultFacilities = async () => {
+  try {
+    const res = await axios.get('/api/admin/settings');
+    const raw = res.data.settings?.default_facilities;
+    defaultFacilities.value = raw ? JSON.parse(raw) : [];
+  } catch (e) {
+    defaultFacilities.value = [];
+  }
+};
+
+const toggleFacility = (f) => {
+  const idx = matchForm.value.facilities.indexOf(f);
+  if (idx === -1) {
+    matchForm.value.facilities.push(f);
+  } else {
+    matchForm.value.facilities.splice(idx, 1);
+  }
+};
+
+const isFacilitySelected = (f) => matchForm.value.facilities.includes(f);
+const selectAllFacilities = () => { matchForm.value.facilities = [...defaultFacilities.value]; };
+const clearAllFacilities = () => { matchForm.value.facilities = []; };
 
 // Auto-fill quotas based on match type
 watch(() => matchForm.value.title, (newTitle) => {
@@ -81,7 +95,10 @@ const fetchMatches = async () => {
   }
 };
 
-onMounted(fetchMatches);
+onMounted(() => {
+  fetchMatches();
+  fetchDefaultFacilities();
+});
 
 const openCreateModal = () => {
   editingMatch.value = null;
@@ -99,17 +116,7 @@ const openCreateModal = () => {
     quota_fw: 4,
     price: '0',
     price_gk: '0',
-    facilities: [
-      '2 Fotografer + Drone (situasional)',
-      'Videografer',
-      '-+ 3 x 25 menit kotor per orang',
-      'Wasit lengkap',
-      'Ballboy',
-      'Minum',
-      'Jersey',
-      'Laundry',
-      'Kitman'
-    ]
+    facilities: [...defaultFacilities.value]
   };
   isModalOpen.value = true;
 };
@@ -440,17 +447,39 @@ const shareToWA = async (match) => {
           </div>
 
           <div class="space-y-3">
-            <label class="block text-[10px] font-bold uppercase text-on-surface-variant mb-1">Fasilitas Pertandingan</label>
-            <div v-for="(f, idx) in matchForm.facilities" :key="idx" class="flex gap-2">
-              <input v-model="matchForm.facilities[idx]" type="text" placeholder="Masukkan fasilitas..." class="flex-1 bg-surface-container border border-outline-variant rounded-xl px-4 py-2 focus:outline-none" />
-              <button @click.prevent="removeFacility(idx)" class="text-red-400 hover:text-red-500">
-                <span class="material-symbols-outlined">delete</span>
+            <div class="flex items-center justify-between mb-2">
+              <label class="block text-[10px] font-bold uppercase text-on-surface-variant">Fasilitas Pertandingan</label>
+              <div class="flex gap-2">
+                <button @click.prevent="selectAllFacilities" class="text-[9px] font-bold text-primary hover:opacity-70 uppercase tracking-wider">Pilih Semua</button>
+                <span class="text-white/20">|</span>
+                <button @click.prevent="clearAllFacilities" class="text-[9px] font-bold text-on-surface-variant hover:text-white uppercase tracking-wider">Hapus Semua</button>
+              </div>
+            </div>
+
+            <div v-if="defaultFacilities.length === 0" class="text-center py-4 border border-dashed border-white/10 rounded-xl">
+              <p class="text-white/30 text-xs">Belum ada fasilitas default.</p>
+              <router-link to="/admin/facilities" class="text-primary text-xs font-bold hover:opacity-70">Tambah di halaman Fasilitas →</router-link>
+            </div>
+
+            <div v-else class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <button
+                v-for="f in defaultFacilities" :key="f"
+                @click.prevent="toggleFacility(f)"
+                class="flex items-center gap-3 px-4 py-3 rounded-xl border text-left transition-all text-sm"
+                :class="isFacilitySelected(f)
+                  ? 'bg-primary/10 border-primary/50 text-white'
+                  : 'bg-surface-container/50 border-outline-variant/30 text-on-surface-variant hover:border-white/20'"
+              >
+                <span class="material-symbols-outlined text-sm flex-shrink-0" :class="isFacilitySelected(f) ? 'text-primary' : 'text-white/20'">
+                  {{ isFacilitySelected(f) ? 'check_circle' : 'radio_button_unchecked' }}
+                </span>
+                {{ f }}
               </button>
             </div>
-            <button @click.prevent="addFacility" class="flex items-center gap-1 text-[10px] font-bold text-primary hover:opacity-70 transition-all pt-2">
-              <span class="material-symbols-outlined text-sm">add_circle</span>
-              Tambah Fasilitas
-            </button>
+
+            <p class="text-[10px] text-white/20 pt-1">
+              {{ matchForm.facilities.length }} dari {{ defaultFacilities.length }} fasilitas dipilih
+            </p>
           </div>
 
           <div class="pt-4">

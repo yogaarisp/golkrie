@@ -74,6 +74,15 @@ const handleLogout = async () => {
           <span class="font-bold tracking-tight">Our Sponsors</span>
         </router-link>
 
+        <router-link to="/admin/facilities" 
+          class="flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all duration-300 group"
+          active-class="bg-primary text-black shadow-lg shadow-primary/20"
+          :class="$route.path === '/admin/facilities' ? '' : 'text-on-surface-variant hover:bg-white/5 hover:text-white'"
+        >
+          <span class="material-symbols-outlined text-2xl">checklist</span>
+          <span class="font-bold tracking-tight">Fasilitas</span>
+        </router-link>
+
         <div class="pt-6 pb-2">
           <div class="px-4 text-[10px] font-black uppercase text-white/20 tracking-widest">Configuration</div>
         </div>
