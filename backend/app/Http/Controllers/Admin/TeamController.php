@@ -107,4 +107,62 @@ class TeamController extends Controller
             'match'   => $result[0] ?? null,
         ]);
     }
+
+    public function addPlayer(Request $request, $matchId)
+    {
+        $request->validate([
+            'full_name'    => 'required|string|max:255',
+            'phone_number' => 'nullable|string|max:20',
+            'position'     => 'required|in:GK,DF,MF,FW',
+        ]);
+
+        // Cari atau buat member
+        $members = $this->sb->select('members', [
+            'full_name' => 'eq.' . $request->full_name,
+            'limit'     => 1,
+        ]);
+        $member = $members[0] ?? null;
+
+        if (!$member) {
+            $member = $this->sb->insert('members', [
+                'full_name'    => $request->full_name,
+                'phone_number' => $request->phone_number ?? '0000000000',
+                'created_at'   => now()->toISOString(),
+                'updated_at'   => now()->toISOString(),
+            ]);
+        }
+
+        // Cek sudah terdaftar
+        $existing = $this->sb->select('registrations', [
+            'match_id'    => 'eq.' . $matchId,
+            'member_id'   => 'eq.' . $member['id'],
+            'select'      => 'id',
+        ]);
+
+        if (!empty($existing)) {
+            return response()->json(['message' => 'Pemain sudah terdaftar di match ini!'], 422);
+        }
+
+        $registration = $this->sb->insert('registrations', [
+            'match_id'    => (int) $matchId,
+            'member_id'   => (int) $member['id'],
+            'player_name' => $member['full_name'],
+            'position'    => $request->position,
+            'is_accepted' => true,
+            'is_paid'     => false,
+            'created_at'  => now()->toISOString(),
+            'updated_at'  => now()->toISOString(),
+        ]);
+
+        return response()->json([
+            'message'      => 'Pemain berhasil ditambahkan!',
+            'registration' => $registration,
+        ]);
+    }
+
+    public function removePlayer($matchId, $registrationId)
+    {
+        $this->sb->delete('registrations', ['id' => $registrationId, 'match_id' => $matchId]);
+        return response()->json(['message' => 'Pemain dihapus dari match.']);
+    }
 }

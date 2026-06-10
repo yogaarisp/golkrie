@@ -73,4 +73,6 @@ Route::middleware('supabase.auth')->prefix('admin')->group(function () {
     Route::post('/matches/{match}/shuffle', [TeamController::class, 'shuffle']);
     Route::post('/matches/{match}/teams', [TeamController::class, 'updateTeams']);
     Route::post('/matches/{match}/teams/config', [TeamController::class, 'updateConfig']);
+    Route::post('/matches/{match}/registrations', [TeamController::class, 'addPlayer']);
+    Route::delete('/matches/{match}/registrations/{registration}', [TeamController::class, 'removePlayer']);
 });

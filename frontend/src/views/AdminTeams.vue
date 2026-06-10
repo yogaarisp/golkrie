@@ -19,6 +19,15 @@ const teamCount = ref(2);
 const teams = ref([]);
 const playerPool = ref([]);
 
+// Add player panel
+const showAddPlayer = ref(false);
+const addPlayerForm = ref({ full_name: '', phone_number: '', position: 'GK' });
+const addPlayerLoading = ref(false);
+const memberSearch = ref('');
+const allMembers = ref([]);
+const filteredMembers = ref([]);
+const showMemberDropdown = ref(false);
+
 const fetchTeams = async () => {
   try {
     const response = await axios.get(`/api/admin/matches/${matchId}/teams`);
@@ -163,7 +172,75 @@ const removeTeam = (index) => {
   teams.value.splice(index, 1);
 };
 
-onMounted(fetchTeams);
+// Fetch all members untuk autocomplete
+const fetchMembers = async () => {
+  try {
+    const res = await axios.get('/api/admin/members');
+    allMembers.value = res.data.members || [];
+  } catch (e) {}
+};
+
+const onMemberSearchInput = () => {
+  const q = memberSearch.value.toLowerCase();
+  if (q.length < 1) {
+    filteredMembers.value = [];
+    showMemberDropdown.value = false;
+    return;
+  }
+  filteredMembers.value = allMembers.value
+    .filter(m => m.full_name.toLowerCase().includes(q))
+    .slice(0, 8);
+  showMemberDropdown.value = filteredMembers.value.length > 0;
+};
+
+const selectMember = (member) => {
+  addPlayerForm.value.full_name    = member.full_name;
+  addPlayerForm.value.phone_number = member.phone_number;
+  memberSearch.value               = member.full_name;
+  showMemberDropdown.value         = false;
+};
+
+const submitAddPlayer = async () => {
+  if (!addPlayerForm.value.full_name) return;
+  addPlayerLoading.value = true;
+  try {
+    const res = await axios.post(`/api/admin/matches/${matchId}/registrations`, addPlayerForm.value);
+    // Tambahkan ke pool langsung tanpa reload
+    const newPlayer = res.data.registration;
+    if (newPlayer) {
+      allPlayers.value.push(newPlayer);
+      playerPool.value.push(newPlayer);
+    }
+    // Reset form
+    addPlayerForm.value = { full_name: '', phone_number: '', position: 'GK' };
+    memberSearch.value  = '';
+    showAddPlayer.value = false;
+  } catch (e) {
+    alert(e.response?.data?.message || 'Gagal menambahkan pemain.');
+  } finally {
+    addPlayerLoading.value = false;
+  }
+};
+
+const removePlayerFromMatch = async (player) => {
+  if (!confirm(`Hapus ${player.player_name} dari match ini?`)) return;
+  try {
+    await axios.delete(`/api/admin/matches/${matchId}/registrations/${player.id}`);
+    // Hapus dari semua list
+    allPlayers.value  = allPlayers.value.filter(p => p.id !== player.id);
+    playerPool.value  = playerPool.value.filter(p => p.id !== player.id);
+    teams.value.forEach(t => {
+      t.players = t.players.filter(p => p.id !== player.id);
+    });
+  } catch (e) {
+    alert('Gagal menghapus pemain.');
+  }
+};
+
+onMounted(() => {
+  fetchTeams();
+  fetchMembers();
+});
 </script>
 
 <template>
@@ -209,8 +286,68 @@ onMounted(fetchTeams);
           <div class="glass-card flex flex-col h-full max-h-[calc(100vh-200px)]">
             <div class="p-4 border-b border-white/5 bg-primary/10 flex justify-between items-center">
               <span class="text-primary font-black uppercase tracking-widest text-xs">Available Players</span>
-              <span class="bg-primary text-black text-[10px] px-2 py-0.5 rounded-full font-bold">{{ playerPool.length }}</span>
+              <div class="flex items-center gap-2">
+                <span class="bg-primary text-black text-[10px] px-2 py-0.5 rounded-full font-bold">{{ playerPool.length }}</span>
+                <button @click="showAddPlayer = !showAddPlayer" class="bg-primary/20 text-primary hover:bg-primary/30 rounded-lg px-2 py-1 text-[10px] font-black uppercase tracking-wider transition-all flex items-center gap-1">
+                  <span class="material-symbols-outlined text-xs">person_add</span>
+                  Tambah
+                </button>
+              </div>
             </div>
+
+            <!-- Form Tambah Pemain -->
+            <transition name="slide-down">
+              <div v-if="showAddPlayer" class="p-3 border-b border-white/5 bg-white/3 space-y-2">
+                <!-- Autocomplete Member -->
+                <div class="relative">
+                  <input
+                    v-model="memberSearch"
+                    @input="onMemberSearchInput"
+                    @blur="setTimeout(() => showMemberDropdown = false, 200)"
+                    type="text"
+                    placeholder="Cari nama member..."
+                    class="w-full bg-surface-container border border-outline-variant rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-primary placeholder:text-white/20"
+                  />
+                  <!-- Dropdown member -->
+                  <div v-if="showMemberDropdown" class="absolute z-50 top-full left-0 right-0 bg-surface-container-high border border-white/10 rounded-lg mt-1 overflow-hidden shadow-xl">
+                    <button
+                      v-for="m in filteredMembers" :key="m.id"
+                      @mousedown.prevent="selectMember(m)"
+                      class="w-full text-left px-3 py-2 text-xs text-white hover:bg-primary/20 transition-all"
+                    >
+                      {{ m.full_name }}
+                      <span class="text-white/30 ml-1">{{ m.phone_number }}</span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Kalau nama baru (tidak ada di members) tampilkan input no HP -->
+                <input
+                  v-if="memberSearch && !allMembers.find(m => m.full_name === addPlayerForm.full_name)"
+                  v-model="addPlayerForm.phone_number"
+                  type="text"
+                  placeholder="No. HP (member baru)"
+                  class="w-full bg-surface-container border border-outline-variant rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-primary placeholder:text-white/20"
+                />
+
+                <!-- Posisi -->
+                <select v-model="addPlayerForm.position" class="w-full bg-surface-container border border-outline-variant rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-primary">
+                  <option value="GK">GK - Kiper</option>
+                  <option value="DF">DF - Defender</option>
+                  <option value="MF">MF - Midfielder</option>
+                  <option value="FW">FW - Forward</option>
+                </select>
+
+                <button
+                  @click="submitAddPlayer"
+                  :disabled="addPlayerLoading || !memberSearch"
+                  class="w-full bg-primary text-black font-black text-xs py-2 rounded-lg hover:scale-105 active:scale-95 transition-all disabled:opacity-40"
+                >
+                  <span v-if="addPlayerLoading">Menambahkan...</span>
+                  <span v-else>+ Tambah ke Pool</span>
+                </button>
+              </div>
+            </transition>
             
             <draggable 
               v-model="playerPool" 
@@ -225,12 +362,17 @@ onMounted(fetchTeams);
                     <span class="text-xs font-bold text-white">{{ element.player_name }}</span>
                     <span class="text-[10px] text-on-surface-variant/60 uppercase tracking-tighter">{{ element.position }}</span>
                   </div>
-                  <span class="material-symbols-outlined text-xs text-on-surface-variant/30 group-hover:text-primary transition-colors">drag_indicator</span>
+                  <div class="flex items-center gap-1">
+                    <span class="material-symbols-outlined text-xs text-on-surface-variant/30 group-hover:text-primary transition-colors">drag_indicator</span>
+                    <button @click.stop="removePlayerFromMatch(element)" class="opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-300 transition-all ml-1">
+                      <span class="material-symbols-outlined text-xs">close</span>
+                    </button>
+                  </div>
                 </div>
               </template>
             </draggable>
             
-            <div v-if="playerPool.length === 0" class="p-8 text-center opacity-20 italic text-[10px] uppercase tracking-widest">
+            <div v-if="playerPool.length === 0 && !showAddPlayer" class="p-8 text-center opacity-20 italic text-[10px] uppercase tracking-widest">
               All players assigned
             </div>
           </div>
@@ -329,5 +471,13 @@ onMounted(fetchTeams);
 }
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.2);
+}
+
+.slide-down-enter-active, .slide-down-leave-active {
+  transition: all 0.2s ease;
+}
+.slide-down-enter-from, .slide-down-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
 }
 </style>
