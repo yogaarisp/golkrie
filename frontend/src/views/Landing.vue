@@ -209,11 +209,14 @@ const formatTime = (dateString) => {
             <img 
               alt="Football pitch" 
               class="w-full h-full object-cover" 
-              src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=1200&q=75&fm=webp" 
-              srcset="https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=600&q=75&fm=webp 600w, https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=1200&q=75&fm=webp 1200w"
-              sizes="(max-width: 768px) 100vw, 1200px"
+              src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=1200&q=60&fm=webp" 
+              srcset="https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=400&q=50&fm=webp 400w, https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=800&q=55&fm=webp 800w, https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=1200&q=60&fm=webp 1200w"
+              sizes="100vw"
+              loading="eager"
               fetchpriority="high"
-              decoding="async"
+              decoding="sync"
+              width="1200"
+              height="800"
             />
             <div class="absolute inset-0 bg-gradient-to-b from-background/95 via-background/70 to-background"></div>
           </div>
