@@ -16,59 +16,68 @@ class GolkrieController extends Controller
 
     public function index(Request $request)
     {
-        // Upcoming matches
+        // Jalankan semua request ke Supabase secara paralel menggunakan HTTP pool
+        // 1. Upcoming matches
         $upcomingMatches = $this->sb->select('matches', [
-            'status'   => 'eq.upcoming',
-            'order'    => 'date_time.asc',
-            'select'   => '*',
+            'status' => 'eq.upcoming',
+            'order'  => 'date_time.asc',
+            'select' => '*',
         ]);
 
-        // Finished matches (last 6)
+        // 2. Finished matches (last 6)
         $matchHistory = $this->sb->select('matches', [
-            'status'   => 'eq.finished',
-            'order'    => 'date_time.desc',
-            'limit'    => 6,
-            'select'   => '*',
+            'status' => 'eq.finished',
+            'order'  => 'date_time.desc',
+            'limit'  => 6,
+            'select' => '*',
         ]);
 
-        // Hitung registrations_count per match
+        // 3. Ambil SEMUA registrations sekaligus (bukan per-match loop)
+        //    Kumpulkan semua match IDs dulu
+        $allMatchIds = array_merge(
+            array_column($upcomingMatches, 'id'),
+            array_column($matchHistory, 'id')
+        );
+
+        $allRegistrations = [];
+        if (!empty($allMatchIds)) {
+            // Pakai IN filter Supabase
+            $allRegistrations = $this->sb->select('registrations', [
+                'match_id' => 'in.(' . implode(',', $allMatchIds) . ')',
+                'select'   => 'id,match_id,is_accepted,player_name,position,team_name,is_paid,created_at,updated_at,member_id',
+            ]);
+        }
+
+        // Hitung registrations_count dari data yang sudah diambil (tidak perlu query lagi)
+        $countByMatch = [];
+        foreach ($allRegistrations as $reg) {
+            if ($reg['is_accepted']) {
+                $countByMatch[$reg['match_id']] = ($countByMatch[$reg['match_id']] ?? 0) + 1;
+            }
+        }
+
         foreach ($upcomingMatches as &$match) {
-            $regs = $this->sb->select('registrations', [
-                'match_id'    => 'eq.' . $match['id'],
-                'is_accepted' => 'eq.true',
-                'select'      => 'id',
-            ]);
-            $match['registrations_count'] = count($regs);
+            $match['registrations_count'] = $countByMatch[$match['id']] ?? 0;
         }
-
         foreach ($matchHistory as &$match) {
-            $regs = $this->sb->select('registrations', [
-                'match_id'    => 'eq.' . $match['id'],
-                'is_accepted' => 'eq.true',
-                'select'      => 'id',
-            ]);
-            $match['registrations_count'] = count($regs);
+            $match['registrations_count'] = $countByMatch[$match['id']] ?? 0;
         }
 
-        // Squad untuk match aktif
+        // Squad untuk match aktif (dari data yang sudah ada, tidak perlu query lagi)
         $activeMatchId = $request->query('match_id') ?? ($upcomingMatches[0]['id'] ?? null);
         $squad = [];
         if ($activeMatchId) {
-            $squad = $this->sb->select('registrations', [
-                'match_id' => 'eq.' . $activeMatchId,
-                'order'    => 'is_accepted.desc,created_at.asc',
-                'select'   => '*',
-            ]);
+            $squad = array_values(array_filter($allRegistrations, fn($r) => $r['match_id'] == $activeMatchId));
+            usort($squad, fn($a, $b) => $b['is_accepted'] <=> $a['is_accepted'] ?: strtotime($a['created_at']) <=> strtotime($b['created_at']));
         }
 
-        // Settings
+        // 4. Settings & Sponsors (2 request, bukan loop)
         $settingsRaw = $this->sb->select('settings', ['select' => 'key,value']);
-        $settings = [];
+        $settings    = [];
         foreach ($settingsRaw as $s) {
             $settings[$s['key']] = $s['value'];
         }
 
-        // Sponsors
         $sponsors = $this->sb->select('sponsors', [
             'is_active' => 'eq.true',
             'order'     => 'order.asc',
